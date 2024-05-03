@@ -14,15 +14,6 @@ services:
     restart: "no"
     env_file:
       - database.env
-  flyway:
-    image: flyway/flyway:9.11.0-alpine
-    depends_on:
-      - database
-    volumes:
-      - ./flyway/sql/:/flyway/sql
-    command: -connectRetries=60 -baselineOnMigrate=true migrate
-    env_file:
-      - database.env
   redis:
     image: redis:latest
     command: redis-server /usr/local/etc/redis/redis.conf

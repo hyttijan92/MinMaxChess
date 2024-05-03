@@ -1,6 +1,7 @@
-from engines import AbstractEngine
+from engines import *
+from models import GameEngine
 import chess
-class Game:
+class GameLoop:
     def play(self,user_uuid, board: chess.Board, Engine: AbstractEngine):
 
         if board.is_checkmate():
@@ -16,3 +17,12 @@ class Game:
                 return {"user_uuid": user_uuid,"fen": board.fen(), "is_checkmate": False, "is_stalemate": True, "winner": None}
             else:
                 return {"user_uuid": user_uuid, "fen": board.fen(), "is_checkmate": False, "is_stalemate": False, "winner": None}
+    def chooseEngine(game):
+        engine = None
+        if game.game_engine == GameEngine.ALPHABETA:
+            engine = AlphaBetaEngine
+        elif game.game_engine == GameEngine.MINMAX:
+            engine = MinMaxEngine
+        else:
+            engine = RandomEngine
+        return engine

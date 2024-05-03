@@ -1,32 +1,45 @@
-from flask import Flask,request,jsonify
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.sql import text
+from flask import Flask,request,jsonify,Response
 import os
-from engines import RandomEngine
-from engines import MinMaxEngine
-from engines import AlphaBetaEngine
 import chess
-from game import Game;
+from models import db
+from game import GameLoop;
+from services import GameService
 app = Flask(__name__)
 #r = redis.Redis(host='redis',port=6379)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URI")
-db = SQLAlchemy(app)
-from services import game_service
 
-@app.route("/")
-def hello_world():
-    print(game_service.find_games_by_user_uuid("TEST"))
-    return "<p>Hello, World!</p>"
+db.init_app(app)
 
 
+@app.route("/previous_games/<user_uuid>",methods=['GET'])
+def previous_games(user_uuid):
+    games = GameService.find_games_by_user_uuid(user_uuid)
+    games_json = GameService.serialize_games(games)
+    return jsonify(games_json)
+
+
+@app.route("/create_game", methods=['POST'])
+def create_game():
+    new_game = request.json
+    print(new_game)
+    success = GameService.create_game(new_game)
+    if(success):
+        return Response(status=201)
+    else:
+        return Response(status=400)
+    
 @app.route("/move", methods=['POST'])
 def move():
-    content = request.json;
-    game = Game()
-    result = game.play(content.get('user_uuid'),chess.Board(content.get('fen')),AlphaBetaEngine)
+    move = request.json;
+    game = GameService.find_game_by_id(move['game_id'])
+    gameloop = GameLoop()
+    result = gameloop.play(game.user_uuid,chess.Board(move.get('fen')),gameloop.chooseEngine(game))
     return jsonify(result)
+
 
     
 if __name__ == "__main__":
 
+    with app.app_context():
+        db.create_all()
     app.run(host="0.0.0.0", port=8000, debug=True)
