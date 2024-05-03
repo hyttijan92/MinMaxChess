@@ -1,6 +1,12 @@
 import Header from "../components/Header";
 import { NavLink } from "react-router-dom";
+import {action} from "mobx";
 function Menu(){
+    
+    @action
+    const test = () =>{
+
+    }
     return(
         <>
             <Header/>
