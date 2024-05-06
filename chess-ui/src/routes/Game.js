@@ -1,44 +1,58 @@
 import '../App.css';
+import {useEffect, useState} from 'react';
+import { useSelector, useDispatch } from 'react-redux'
 import Header from '../components/Header';
-import {useState} from 'react';
 import Chessboard from 'chessboardjsx';
 import  {Chess} from "chess.js";
 import Modal from '../components/Modal';
+import GameOverDialog from '../components/GameOverDialog';
+import {selectGameState, selectUserUUID, store,toggle_promotion_dialog,update_game} from "../stores/rootStore";
+import * as api from "../api/api.js";
+
 function Game() {
-  const [game,setGame] = useState(new Chess("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"))
+  const user_uuid = useSelector(selectUserUUID);
+  const gameState = useSelector(selectGameState);
+  const [board,setBoard] = useState(new Chess(gameState.fen));
   const [squareStyles,setSquareStyles] = useState({});
-  const [promotionDialogShown, setPromotionDialogShown] = useState(false)
+  const dispatch = useDispatch();
+  /**
+  useEffect(() =>{
+    console.log(game)
+    if(gameState.is_white){
+      fetchAIMove();
+    }
+  },[])
+  */
   const handleDrop = ({sourceSquare, targetSquare,piece}) =>{
-    console.log({from: sourceSquare, to:targetSquare, piece:piece})
-    //checkForPromotion(sourceSquare,targetSquare,piece)
-    movePiece(sourceSquare,targetSquare,'q')
+    //if(checkIfPromoted(sourceSquare,targetSquare,piece)){
+
+    //}
+    //else{
+      movePiece(sourceSquare,targetSquare,'q')
+    //}
     
   }
-  const choosePromotion = (sourceSquare,targetSquare ) => (piece) =>{
+  const choosePromotion  = (promotion) =>{
 
+    dispatch(toggle_promotion_dialog({showPromotionDialog:false}))
+    movePiece()
   }
-  const movePiece = (sourceSquare, targetSquare, promotion = null) =>{
+  const movePiece = async(sourceSquare, targetSquare, promotion = null) =>{
     try{
-      game.move({from: sourceSquare, to:targetSquare,promotion: promotion})
-      setGame(new Chess(game.fen()))
-      fetchAIMove(game);
+   
+      board.move({from: sourceSquare, to:targetSquare,promotion: promotion})    
+      const game = await api.makeGameMoveApi(user_uuid,gameState.id,board.fen())
+      setBoard(new Chess(game.fen));
+      dispatch(update_game(game))
+
     }
     catch(e){
       console.log(e);
     } 
   }
-  const checkForPromotion = (sourceSquare, targetSquare, piece) =>{
-    if(piece ==='wP'){
-      if(['a8','b8','c8','d8','e8','f8','g8','h8'].includes(targetSquare)){
-        setPromotionDialogShown(true);
-      }
-      else{
-        movePiece(sourceSquare, targetSquare)
-      }
-    }
-  }
+
   const handleOnMouseOverSquare = (square) =>{
-    let moves = game.moves({
+    let moves = board.moves({
       square: square,
       verbose: true
     });
@@ -52,42 +66,21 @@ function Game() {
     setSquareStyles(stylesForSquares)
 
   }
-  const fetchAIMove = async(game) =>{
-
-    const data = {
-      user_uuid: "TEST",
-      fen: game.fen()
-    }
-    const response = await fetch("/api/move",{
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-    const json = await response.json();
-
-    console.log(json);
-    if(json.is_checkmate){
-      alert("GAME OVER. Winner is",json.winner)
-      setGame(new Chess("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"))
-    }
-    else if(json.is_stalemate){
-      alert("GAME OVER. STALEMATE")
-      setGame(new Chess("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"))
-    }
-    setGame(new Chess(json.fen));
-  }
+  
   return (
     <>
       <Header/>
-      {promotionDialogShown &&
-      <Modal choosePromotion={choosePromotion()}/>
-      }
     <div className="container mx-auto">
+      {store.getState().showPromotionDialog &&
+      <Modal choosePromotion={choosePromotion}/>
+      }
+      {gameState.game_status === "ENDED" &&
+      <GameOverDialog draw={gameState.draw} winner={gameState.winner}/>
+      }
       <Chessboard 
         onDrop={handleDrop}
-        position={game.fen()}
+        position={board.fen()}
+        orientation={gameState.is_white ? 'white' : 'black'}
         onMouseOverSquare={handleOnMouseOverSquare}
         onMouseOutSquare={() => setSquareStyles({})}
         squareStyles={squareStyles}

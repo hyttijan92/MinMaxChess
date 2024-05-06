@@ -12,14 +12,14 @@ function Header() {
                         </button>
                     </NavLink>
                 </div>
-                <div class="relative">
+                <div className="relative">
                     <NavLink to="/engines">
                         <button type="button" className="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900" aria-expanded="false">
                             Engines
                         </button>
                     </NavLink>
                 </div>
-                <div class="relative">
+                <div className="relative">
                     <NavLink to="/about">
                         <button type="button" className="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900" aria-expanded="false">
                             About

@@ -1,39 +1,43 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from 'react-router-dom'
-
 import Header from "../components/Header";
-import {saveStateToLocalStorage, getStateFromLocalStorage } from "../utils/utilFunctions";
-function GameConfiguration(){
-
-    const [state,setState] = useState(getStateFromLocalStorage() ? getStateFromLocalStorage() : {game: null})
-    const [bot,setBot] = useState("Random")
-    const [color,setColor] = useState("White")
+import { store, start_game, selectUserUUID, selectGameState } from "../stores/rootStore.js";
+import { useSelector } from "react-redux";
+import * as api from "../api/api.js";
+function GameConfiguration() {
+    const [gameEngine, setGameEngine] = useState("RANDOM")
+    const [color, setColor] = useState("WHITE")
+    const user_uuid = useSelector(selectUserUUID)
+    const gameState = useSelector(selectGameState);
     const navigate = useNavigate()
-    const startGame = () =>{
-        setState({game:{bot:bot,fen:"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"}})
-        saveStateToLocalStorage(state)
+
+    const handleClick = async () => {
+        const game = await api.createGameApi(user_uuid, gameEngine, color)
+        store.dispatch(start_game(game))
         navigate("/game")
     }
-    return(
+    return (
         <>
-            <Header/>
+            <Header />
             <div className="container mx-auto">
-                <h1 className={"text-2xl"}>Game configuration</h1>
-                <label for="bot">Choose bot</label>
-                <select value={bot} onChange={(event)=> setBot(event.target.value)}>
-                    <option value="Random">Random</option>
-                    <option value="MinMax">MinMax</option>
-                    <option value="Alphabeta">Alphabeta</option>
-                </select>
-                <label for="bot">Choose color</label>
-                <select value={color} onChange={(event)=> setColor(event.target.value)}>
-                    <option value="White">White</option>
-                    <option value="Black">Black</option>
-                </select>
-                
-                <button onClick={startGame}>Start a new a game</button>
-                {state.game !== null &&
-                <NavLink to="/game"><button>Continue game</button></NavLink>
+                {gameState === null ?
+                    <>
+                        <h1 className={"text-2xl"}>Game configuration</h1>
+                        <label htmlFor="game_engine">Choose game engine</label>
+                        <select value={gameEngine} onChange={(event) => setGameEngine(event.target.value)}>
+                            <option value="RANDOM">Random</option>
+                            <option value="MINMAX">MinMax</option>
+                            <option value="ALPHABETA">Alphabeta</option>
+                        </select>
+                        <label htmlFor="color">Choose color</label>
+                        <select value={color} onChange={(event) => setColor(event.target.value)}>
+                            <option value="WHITE">White</option>
+                            <option value="BLACK">Black</option>
+                        </select>
+                        <button onClick={handleClick}>Start a new a game</button>
+                    </>
+                    :
+                    <NavLink to="/game"><button>Continue game</button></NavLink>
                 }
             </div>
         </>

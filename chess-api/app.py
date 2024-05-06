@@ -1,7 +1,7 @@
 from flask import Flask,request,jsonify,Response
 import os
 import chess
-from models import db
+from models import db,GameStatus
 from game import GameLoop;
 from services import GameService
 app = Flask(__name__)
@@ -22,9 +22,10 @@ def previous_games(user_uuid):
 def create_game():
     new_game = request.json
     print(new_game)
-    success = GameService.create_game(new_game)
-    if(success):
-        return Response(status=201)
+    game = GameService.create_game(new_game)
+    game_json = GameService.serialize_game(game)
+    if(game):
+        return jsonify(game_json)
     else:
         return Response(status=400)
     
@@ -33,8 +34,14 @@ def move():
     move = request.json;
     game = GameService.find_game_by_id(move['game_id'])
     gameloop = GameLoop()
-    result = gameloop.play(game.user_uuid,chess.Board(move.get('fen')),gameloop.chooseEngine(game))
-    return jsonify(result)
+    result = gameloop.play(chess.Board(move.get('fen')), not game.is_white, gameloop.chooseEngine(game))
+    game.fen = result["fen"]
+    game.draw = result["draw"]
+    game.winner = result["winner"]
+    if game.draw or game.winner != None:
+        game.game_status = GameStatus.ENDED
+    db.session.commit()
+    return jsonify(GameService.serialize_game(game))
 
 
     

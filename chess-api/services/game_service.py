@@ -14,7 +14,7 @@ class GameService:
         game = Game(user_uuid=new_game['user_uuid'],fen=new_game['fen'],game_engine=new_game['game_engine'],is_white=new_game['is_white'])
         db.session.add(game)
         db.session.commit()
-        return True
+        return GameService.find_game_by_id(game.id)
     
     @staticmethod
     def serialize_game(game):
