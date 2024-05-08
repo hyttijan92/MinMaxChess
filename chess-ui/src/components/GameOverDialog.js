@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function GameOverDialog(draw,winner) {
+export default function GameOverDialog({draw,winner}) {
  
   return  (
         <>
@@ -13,10 +13,12 @@ export default function GameOverDialog(draw,winner) {
                   <h3 className="text-3xl font-semibold">
                     Game over
                   </h3>
+                  <div>
                     {draw ?
                     <p>Game ended in a draw</p> :
                     <p>Game ended. The winner is {winner}</p>
                     }
+                  </div>
                 </div>
               </div>
             </div>

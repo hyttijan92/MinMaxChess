@@ -1,4 +1,4 @@
-from models import Game,db
+from models import Game,GameStatus,db
 
 class GameService:
 
@@ -9,6 +9,10 @@ class GameService:
     def find_games_by_user_uuid(user_uuid):
         return Game.query.filter_by(user_uuid=user_uuid).all()
 
+    @staticmethod
+    def find_most_recent_ongoing_game_by_user_uuid(user_uuid):
+        return Game.query.filter_by(user_uuid=user_uuid,game_status=GameStatus.ONGOING).order_by(Game.created_at.desc()).first()
+    
     @staticmethod
     def create_game(new_game):
         game = Game(user_uuid=new_game['user_uuid'],fen=new_game['fen'],game_engine=new_game['game_engine'],is_white=new_game['is_white'])

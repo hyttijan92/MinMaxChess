@@ -1,3 +1,14 @@
+export const getCurrentGameApi = async(user_uuid) =>{
+    try{
+        const response = await fetch(`/api/current_game/${user_uuid}`)
+        const json = await response.json();
+        return json;
+    } catch(e){
+        return null;
+    }
+    
+} 
+
 export const createGameApi = async(user_uuid,gameEngine,color) =>{
     const response = await fetch("/api/create_game",{
         method:"POST",

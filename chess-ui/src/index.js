@@ -19,7 +19,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <Router>
       <Routes>
         <Route exact path="/" element={<GameConfiguration />}/>
-        <Route path="/game" element={<Game />}/>
+        <Route path="/game" element={<Game/>}/>
         <Route path="/engines" element={<Engines/>}/>
       </Routes>
     </Router>

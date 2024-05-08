@@ -11,6 +11,15 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URI")
 db.init_app(app)
 
 
+@app.route("/current_game/<user_uuid>", methods=['GET'])
+def current_game(user_uuid):
+    current_game = GameService.find_most_recent_ongoing_game_by_user_uuid(user_uuid)
+    if current_game != None:
+        game_json = GameService.serialize_game(current_game)
+        return jsonify(game_json)
+    else:
+        return None
+    
 @app.route("/previous_games/<user_uuid>",methods=['GET'])
 def previous_games(user_uuid):
     games = GameService.find_games_by_user_uuid(user_uuid)

@@ -1,91 +1,118 @@
 import '../App.css';
-import {useEffect, useState} from 'react';
+import { Navigate } from "react-router-dom";
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import Header from '../components/Header';
 import Chessboard from 'chessboardjsx';
-import  {Chess} from "chess.js";
+import { Chess } from "chess.js";
 import Modal from '../components/Modal';
 import GameOverDialog from '../components/GameOverDialog';
-import {selectGameState, selectUserUUID, store,toggle_promotion_dialog,update_game} from "../stores/rootStore";
+import { selectGameState, selectGameUIState, selectUserUUID, toggle_promotion_dialog, update_game, store_pending_move } from "../stores/rootStore";
 import * as api from "../api/api.js";
 
 function Game() {
+
   const user_uuid = useSelector(selectUserUUID);
   const gameState = useSelector(selectGameState);
-  const [board,setBoard] = useState(new Chess(gameState.fen));
-  const [squareStyles,setSquareStyles] = useState({});
+  const gameUIState = useSelector(selectGameUIState);
+  const [squareStyles, setSquareStyles] = useState({});
   const dispatch = useDispatch();
-  /**
-  useEffect(() =>{
-    console.log(game)
-    if(gameState.is_white){
-      fetchAIMove();
+
+  useEffect(() => {
+    async function gameStart() {
+      if (gameState && gameState.ai_starts) {
+        dispatch(update_game({ ai_starts: false }))
+        const game = await api.makeGameMoveApi(user_uuid, gameState.id, new Chess(gameState.fen).fen());
+        dispatch(update_game(game))
+      }
     }
-  },[])
-  */
-  const handleDrop = ({sourceSquare, targetSquare,piece}) =>{
-    //if(checkIfPromoted(sourceSquare,targetSquare,piece)){
+    gameStart();
+  })
 
-    //}
-    //else{
-      movePiece(sourceSquare,targetSquare,'q')
-    //}
-    
-  }
-  const choosePromotion  = (promotion) =>{
+  const checkIfPromoted = (sourceSquare, targetSquare, piece) => {
 
-    dispatch(toggle_promotion_dialog({showPromotionDialog:false}))
-    movePiece()
+    if (piece === 'wP') {
+      const whitePromotionSquares = ['a8', 'b8', 'c8', 'd8', 'e8', 'f8', 'g8', 'h8']
+      if (whitePromotionSquares.includes(targetSquare)) {
+        return true;
+      }
+    }
+    else if (piece === 'bP') {
+      const blackPromotionSquares = ['a1', 'b1', 'c1', 'd1', 'e1', 'f1', 'g1', 'h1']
+      if (blackPromotionSquares.includes(targetSquare)) {
+        return true;
+      }
+    }
+    return false;
   }
-  const movePiece = async(sourceSquare, targetSquare, promotion = null) =>{
-    try{
-   
-      board.move({from: sourceSquare, to:targetSquare,promotion: promotion})    
-      const game = await api.makeGameMoveApi(user_uuid,gameState.id,board.fen())
-      setBoard(new Chess(game.fen));
+  const handleDrop = ({ sourceSquare, targetSquare, piece }) => {
+    if (checkIfPromoted(sourceSquare, targetSquare, piece)) {
+
+      dispatch(store_pending_move({ sourceSquare: sourceSquare, targetSquare: targetSquare }))
+      dispatch(toggle_promotion_dialog({ showPromotionDialog: true }))
+    }
+    else {
+      movePiece(sourceSquare, targetSquare, null)
+    }
+
+  }
+  const choosePromotion = (promotion) => {
+    dispatch(toggle_promotion_dialog({ showPromotionDialog: false }))
+    movePiece(gameState.pendingMove.sourceSquare, gameState.pendingMove.targetSquare, promotion)
+    dispatch(store_pending_move(null))
+  }
+  const movePiece = async (sourceSquare, targetSquare, promotion = null) => {
+    try {
+      const board = new Chess(gameState.fen)
+      board.move({ from: sourceSquare, to: targetSquare, promotion: promotion })
+      dispatch(update_game({ fen: board.fen() }))
+      const game = await api.makeGameMoveApi(user_uuid, gameState.id, board.fen())
       dispatch(update_game(game))
-
     }
-    catch(e){
+    catch (e) {
       console.log(e);
-    } 
+    }
   }
 
-  const handleOnMouseOverSquare = (square) =>{
+  const handleOnMouseOverSquare = (square) => {
+    const board = new Chess(gameState.fen);
     let moves = board.moves({
       square: square,
       verbose: true
     });
-    if(moves.length !== 0){
-      showPossibleMoves(square,moves)
+    if (moves.length !== 0) {
+      const stylesForSquares = moves.reduce((acc, curr) => { acc[curr.to] = { backgroundColor: board.squareColor(curr.to) === 'light' ? 'yellow' : 'gold' }; return acc }, {})
+      setSquareStyles(stylesForSquares)
     }
   }
-  const showPossibleMoves = (square,moves) =>{
-    console.log(moves)
-    const stylesForSquares = moves.reduce((acc,curr) =>{acc[curr.to]={backgroundColor:'yellow'}; return acc} ,{})
-    setSquareStyles(stylesForSquares)
 
-  }
-  
+
+
   return (
     <>
-      <Header/>
-    <div className="container mx-auto">
-      {store.getState().showPromotionDialog &&
-      <Modal choosePromotion={choosePromotion}/>
+      <Header />
+      {gameState ?
+        <div className="container mx-auto grid justify-center">
+          {gameUIState.showPromotionDialog &&
+            <Modal choosePromotion={choosePromotion} />
+          }
+          {gameState.game_status === "ENDED" &&
+            <GameOverDialog draw={gameState.draw} winner={gameState.winner} />
+          }
+          <Chessboard
+            onDrop={handleDrop}
+            position={new Chess(gameState.fen).fen()}
+            orientation={gameState.is_white ? 'white' : 'black'}
+            onMouseOverSquare={handleOnMouseOverSquare}
+            onMouseOutSquare={() => setSquareStyles({})}
+            squareStyles={squareStyles}
+            calcWidth={({ screenWidth, screenHeight }) => { return screenWidth > screenHeight ? screenHeight : screenWidth }}
+          />
+          <button className={'bg-gray-500 text-xl'}>Resign</button>
+        </div>
+        :
+        <Navigate to="/" replace />
       }
-      {gameState.game_status === "ENDED" &&
-      <GameOverDialog draw={gameState.draw} winner={gameState.winner}/>
-      }
-      <Chessboard 
-        onDrop={handleDrop}
-        position={board.fen()}
-        orientation={gameState.is_white ? 'white' : 'black'}
-        onMouseOverSquare={handleOnMouseOverSquare}
-        onMouseOutSquare={() => setSquareStyles({})}
-        squareStyles={squareStyles}
-      />
-    </div>
     </>
   );
 }
