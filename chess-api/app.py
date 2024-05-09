@@ -5,7 +5,6 @@ from models import db,GameStatus
 from game import GameLoop;
 from services import GameService
 app = Flask(__name__)
-#r = redis.Redis(host='redis',port=6379)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URI")
 
 db.init_app(app)

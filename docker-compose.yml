@@ -14,13 +14,6 @@ services:
     restart: "no"
     env_file:
       - database.env
-  redis:
-    image: redis:latest
-    command: redis-server /usr/local/etc/redis/redis.conf
-    volumes:
-      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
-    expose:
-      - 6379
   chess-api:
     build: chess-api
     image: chess-api
@@ -30,7 +23,6 @@ services:
     expose:
       - 8000
     depends_on:
-      - redis
       - database
     env_file:
       - database.env
