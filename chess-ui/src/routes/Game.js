@@ -7,8 +7,8 @@ import Chessboard from 'chessboardjsx';
 import { Chess } from "chess.js";
 import Modal from '../components/Modal';
 import GameOverDialog from '../components/GameOverDialog';
-import { selectGameState, selectGameUIState, selectUserUUID, toggle_promotion_dialog, update_game, store_pending_move } from "../stores/rootStore";
-import * as api from "../api/api.js";
+import { selectGameState, selectGameUIState, selectUserUUID, toggle_promotion_dialog, update_game, store_pending_move,resign, makeAIMove } from "../stores/rootStore";
+
 
 function Game() {
 
@@ -22,8 +22,7 @@ function Game() {
     async function gameStart() {
       if (gameState && gameState.ai_starts) {
         dispatch(update_game({ ai_starts: false }))
-        const game = await api.makeGameMoveApi(user_uuid, gameState.id, new Chess(gameState.fen).fen());
-        dispatch(update_game(game))
+        dispatch(makeAIMove(user_uuid,gameState.id, new Chess(gameState.fen).fen()))
       }
     }
     gameStart();
@@ -66,8 +65,7 @@ function Game() {
       const board = new Chess(gameState.fen)
       board.move({ from: sourceSquare, to: targetSquare, promotion: promotion })
       dispatch(update_game({ fen: board.fen() }))
-      const game = await api.makeGameMoveApi(user_uuid, gameState.id, board.fen())
-      dispatch(update_game(game))
+      dispatch(makeAIMove(user_uuid,gameState.id,board.fen()))
     }
     catch (e) {
       console.log(e);
@@ -85,7 +83,9 @@ function Game() {
       setSquareStyles(stylesForSquares)
     }
   }
-
+  const handleResign = () =>{
+    dispatch(resign(gameState.id))
+  }
 
 
   return (
@@ -99,6 +99,7 @@ function Game() {
           {gameState.game_status === "ENDED" &&
             <GameOverDialog draw={gameState.draw} winner={gameState.winner} />
           }
+          <h1 className={"text-xl"}>{user_uuid} VS {gameState.game_engine}</h1>
           <Chessboard
             onDrop={handleDrop}
             position={new Chess(gameState.fen).fen()}
@@ -106,9 +107,9 @@ function Game() {
             onMouseOverSquare={handleOnMouseOverSquare}
             onMouseOutSquare={() => setSquareStyles({})}
             squareStyles={squareStyles}
-            calcWidth={({ screenWidth, screenHeight }) => { return screenWidth > screenHeight ? screenHeight : screenWidth }}
+            calcWidth={({ screenWidth, screenHeight }) => { return screenWidth > screenHeight ? (screenHeight * 0.75) : (screenWidth * 0.75) }}
           />
-          <button className={'bg-gray-500 text-xl'}>Resign</button>
+          <button onClick={handleResign} className={'bg-gray-500 text-xl'}>Resign</button>
         </div>
         :
         <Navigate to="/" replace />

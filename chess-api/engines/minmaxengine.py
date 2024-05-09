@@ -12,8 +12,6 @@ class MinMaxEngine(AbstractEngine):
     def __init__(self, board=..., is_white=True,depth=2):
          super().__init__(board, is_white)
          self.depth = depth
-         self.counter=0
-         print("TEST")
     def decide(self):
         if self.is_white:
             max_value = -9999999
@@ -26,7 +24,6 @@ class MinMaxEngine(AbstractEngine):
                     max_move = move
                 self.board.pop()
             self.board.push(max_move)
-            print("counter:{}".format(self.counter))
             return self.board
         else:
             min_value = 9999999
@@ -40,11 +37,9 @@ class MinMaxEngine(AbstractEngine):
                     print(min_value)
                 self.board.pop()
             self.board.push(min_move)
-            print("counter:{}".format(self.counter))
             return self.board
     def minmax(self,board: chess.Board, depth, is_player_maximizing):
         if depth == 0 or board.is_game_over():
-            self.counter+=1
             return self.heuristic(board)
         elif is_player_maximizing:
             max_value = -9999999

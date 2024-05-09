@@ -65,14 +65,13 @@ class AlphaBetaEngine(AbstractEngine):
                     break
                 alpha = max(alpha,max_value)
             self.board.push(max_move)
-            print("ab counter:{}".format(self.counter))
             return self.board
         else:
             min_value = 9999999
             min_move = None
             for move in legal_moves:
                 self.board.push(move)
-                value = self.alphabeta(self.board,self.depth,-9999999,9999999,True)
+                value = self.alphabeta(self.board,self.depth,alpha,beta,True)
                 if value < min_value or min_move == None:
                     min_value = value
                     min_move = move
@@ -82,7 +81,6 @@ class AlphaBetaEngine(AbstractEngine):
                     break
                 beta = min(beta,min_value)
             self.board.push(min_move)
-            print("ab counter:{}".format(self.counter))
             return self.board
     def alphabeta(self,board: chess.Board, depth, alpha,beta, is_player_maximizing):
         if depth == 0 or board.is_game_over():

@@ -9,14 +9,23 @@ const gameSlice = createSlice({
         gameUIState:{
             showPromotionDialog: false,
             showEndingDialog: false            
-        }
+        },
+        scoreState: []
     },
     reducers :{
         start_game: (state, action) =>{
             state.gameState = action.payload
         },
+        reset_game: (state) =>{
+            state.gameState = null;
+        },
         update_game:(state, action) =>{
             state.gameState = {...state.gameState,...action.payload}
+        },
+        update_scores:(state, action) =>{
+            const newScores = [...state.scoreState,...action.payload].sort((s1,s2) => new Date(s2.created_at) - new Date(s1.created_at));
+            console.log([...newScores].filter((score, index, self) => self.findIndex(s => s.id === score.id) === index))
+            state.scoreState = [...newScores].filter((score, index, self) => self.findIndex(s => s.id === score.id) === index)
         },
         toggle_promotion_dialog: (state, action) =>{
             console.log(action.payload)
@@ -28,19 +37,40 @@ const gameSlice = createSlice({
     }
 })
 
-export const {start_game, update_game, store_pending_move,toggle_promotion_dialog} = gameSlice.actions;
+export const {start_game, update_game, store_pending_move,toggle_promotion_dialog,update_scores,reset_game} = gameSlice.actions;
 
 export const store = configureStore({
     reducer: gameSlice.reducer
 });
 
 
-export const initializeGameState = () =>{
+export const initializeGameState = (user_uuid) =>{
     return async dispatch => {
-        const game = await api.getCurrentGameApi(store.userState.user_uuid)
+        const game = await api.getCurrentGameApi(user_uuid)
         dispatch(start_game(game))
+    }
+}
+export const updateScoreState = (page) =>{
+    return async dispatch =>{
+        const scores = await api.getPreviousGamesApi(page)
+        console.log(scores)
+        dispatch(update_scores(scores))
+    }
+}
+export const makeAIMove = (user_uuid,id,fen) =>{
+
+    return async dispatch =>{
+        const game = await api.makeGameMoveApi(user_uuid, id, fen)
+        dispatch(update_game(game))
+    }
+}
+export const resign = (game_id) =>{
+    return async dispatch =>{
+        const game = await api.resignApi(game_id)
+        dispatch(update_game(game))
     }
 }
 export const selectGameState = state => state.gameState
 export const selectGameUIState = state => state.gameUIState
 export const selectUserUUID = state => state.userState.user_uuid
+export const selectScoreState = state => state.scoreState;

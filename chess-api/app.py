@@ -18,11 +18,12 @@ def current_game(user_uuid):
         game_json = GameService.serialize_game(current_game)
         return jsonify(game_json)
     else:
-        return None
+        return Response(status=404)
     
-@app.route("/previous_games/<user_uuid>",methods=['GET'])
-def previous_games(user_uuid):
-    games = GameService.find_games_by_user_uuid(user_uuid)
+@app.route("/previous_games",methods=['GET'])
+def previous_games():
+    page = request.args.get("page")
+    games = GameService.find_ended_games_by_page(page)
     games_json = GameService.serialize_games(games)
     return jsonify(games_json)
 
@@ -52,7 +53,17 @@ def move():
     db.session.commit()
     return jsonify(GameService.serialize_game(game))
 
-
+@app.route("/resign", methods=['POST'])
+def resign():
+    content = request.json
+    game = GameService.find_game_by_id(content['game_id'])
+    game.game_status = GameStatus.ENDED
+    if game.is_white:
+        game.winner = "Black"
+    else:
+        game.winner = "White"
+    db.session.commit() 
+    return jsonify(GameService.serialize_game(game))
     
 if __name__ == "__main__":
 

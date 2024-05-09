@@ -7,6 +7,17 @@ export const getCurrentGameApi = async(user_uuid) =>{
         return null;
     }
     
+}
+export const getPreviousGamesApi = async(page) =>{
+    try{
+        const response = await fetch(`/api/previous_games?page=${page}`)
+        const json = await response.json();
+        return json;
+    } catch(e){
+        console.log(e)
+        return [];
+    }
+    
 } 
 
 export const createGameApi = async(user_uuid,gameEngine,color) =>{
@@ -43,4 +54,18 @@ export const makeGameMoveApi = async(user_uuid,game_id, fen) =>{
       
       const json = await response.json();
       return json;
+}
+export const resignApi = async(game_id) =>{
+    const data = {
+        game_id: game_id
+    }
+    const response = await fetch("/api/resign",{
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data)
+    })
+    const json = await response.json();
+    return json;
 }

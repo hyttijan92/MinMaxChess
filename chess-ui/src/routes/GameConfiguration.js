@@ -43,7 +43,12 @@ function GameConfiguration() {
                         </div>
                     </>
                     :
-                    <NavLink to="/game"><button>Continue game</button></NavLink>
+                    <>
+                        <h1 >{user_uuid} VS {gameState.game_engine}</h1>
+                        <div className="mb-4">
+                            <NavLink to="/game"><button className={"bg-blue-500 text-white px-8 py-4 rounded-full text-xl"}>Continue game</button></NavLink>
+                        </div>
+                    </>
                 }
             </div>
         </>

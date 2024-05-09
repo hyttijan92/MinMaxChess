@@ -6,8 +6,8 @@ class GameService:
     def find_game_by_id(id):
         return Game.query.filter_by(id=id).first()
     @staticmethod
-    def find_games_by_user_uuid(user_uuid):
-        return Game.query.filter_by(user_uuid=user_uuid).all()
+    def find_ended_games_by_page(page):
+        return Game.query.filter_by(game_status=GameStatus.ENDED).order_by(Game.created_at.desc()).offset(page*20).all()
 
     @staticmethod
     def find_most_recent_ongoing_game_by_user_uuid(user_uuid):
