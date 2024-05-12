@@ -75,7 +75,6 @@ class AlphaBetaEngine(AbstractEngine):
                 if value < min_value or min_move == None:
                     min_value = value
                     min_move = move
-                    print(min_value)
                 self.board.pop()
                 if min_value < alpha:
                     break

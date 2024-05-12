@@ -31,7 +31,6 @@ def previous_games():
 @app.route("/create_game", methods=['POST'])
 def create_game():
     new_game = request.json
-    print(new_game)
     game = GameService.create_game(new_game)
     game_json = GameService.serialize_game(game)
     if(game):

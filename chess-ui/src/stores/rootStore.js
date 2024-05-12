@@ -26,7 +26,6 @@ const gameSlice = createSlice({
             state.scoreState = action.payload
         },
         toggle_promotion_dialog: (state, action) =>{
-            console.log(action.payload)
             state.gameUIState.showPromotionDialog = action.payload.showPromotionDialog
         },
         store_pending_move: (state, action) =>{
@@ -51,7 +50,6 @@ export const initializeGameState = (user_uuid) =>{
 export const updateScoreState = (page) =>{
     return async dispatch =>{
         const scores = await api.getPreviousGamesApi(page)
-        console.log(scores)
         dispatch(update_scores(scores))
     }
 }

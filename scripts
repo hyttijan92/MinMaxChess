@@ -1,2 +1,0 @@
-flask --app app run --port 5001
-docker rm -f $(docker ps -qa)
