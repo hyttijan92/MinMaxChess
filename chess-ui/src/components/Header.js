@@ -1,9 +1,12 @@
+import { useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
+import { selectUserUUID } from "../stores/rootStore";
 
 function Header() {
+    const user_uuid = useSelector(selectUserUUID)
     return (
         <nav className="p-4 mb-4 shadow">
-            <span className="text-2xl text-gray-700 font-serif">MinMax Chess</span>
+            <span className="text-2xl text-gray-700 font-serif">MinMax Chess - user {user_uuid}</span>
             <div className="lg:flex lg:gap-x-12">
                 <div className="relative">
                     <NavLink to="/">

@@ -7,8 +7,8 @@ function Engines() {
         <>
             <Header />
             <div className="container mx-auto grid justify-center">
-                <h1 className={"text-2xl"}>MinMax chess engines</h1>
-                <p>There are three chess engines to compete against.</p>
+                <h1 className={"text-2xl"}>Chess engines</h1>
+                <p>There are three chess engines to compete against: MinMax engine, AlphaBeta engine and Random engine. </p>
                 <h2 className={"text-xl"}>MinMax engine</h2>
                 <p>The Minimax algorithm is a decision-making algorithm commonly used in two-player turn-based games such as chess or tic-tac-toe. It operates by recursively evaluating possible future moves and outcomes. At each level of the game tree, it alternates between maximizing the player's score (if it's the player's turn) and minimizing the opponent's score (if it's the opponent's turn). This process continues until a terminal state or a predetermined depth is reached. Ultimately, the algorithm selects the move that leads to the best possible outcome for the player, assuming optimal play from both players.</p>
                 <img src={Minmax} alt="Minmax" />

@@ -1,4 +1,3 @@
-import '../App.css';
 import { Navigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
@@ -92,6 +91,7 @@ function Game() {
     <>
       <Header />
       {gameState ?
+        
         <div className="container mx-auto grid justify-center">
           {gameUIState.showPromotionDialog &&
             <Modal choosePromotion={choosePromotion} />
@@ -99,7 +99,6 @@ function Game() {
           {gameState.game_status === "ENDED" &&
             <GameOverDialog draw={gameState.draw} winner={gameState.winner} />
           }
-          <h1 className={"text-xl"}>{user_uuid} VS {gameState.game_engine}</h1>
           <Chessboard
             onDrop={handleDrop}
             position={new Chess(gameState.fen).fen()}
@@ -107,6 +106,7 @@ function Game() {
             onMouseOverSquare={handleOnMouseOverSquare}
             onMouseOutSquare={() => setSquareStyles({})}
             squareStyles={squareStyles}
+            draggable={(new Chess(gameState.fen).turn() === 'w') === gameState.is_white}
             calcWidth={({ screenWidth, screenHeight }) => { return screenWidth > screenHeight ? (screenHeight * 0.75) : (screenWidth * 0.75) }}
           />
           <button onClick={handleResign} className={'bg-gray-500 text-xl'}>Resign</button>

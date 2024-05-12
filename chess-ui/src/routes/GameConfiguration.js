@@ -28,7 +28,7 @@ function GameConfiguration() {
                             <select className={"text-xl px-16"} value={gameEngine} onChange={(event) => setGameEngine(event.target.value)}>
                                 <option value="RANDOM">Random</option>
                                 <option value="MINMAX">MinMax</option>
-                                <option value="ALPHABETA">Alphabeta</option>
+                                <option value="ALPHABETA">AlphaBeta</option>
                             </select>
                         </div>
                         <div className="mb-4">
@@ -44,7 +44,7 @@ function GameConfiguration() {
                     </>
                     :
                     <>
-                        <h1 >{user_uuid} VS {gameState.game_engine}</h1>
+                        <h1 >You VS {gameState.game_engine}</h1>
                         <div className="mb-4">
                             <NavLink to="/game"><button className={"bg-blue-500 text-white px-8 py-4 rounded-full text-xl"}>Continue game</button></NavLink>
                         </div>

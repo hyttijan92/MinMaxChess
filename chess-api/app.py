@@ -5,6 +5,7 @@ from models import db,GameStatus
 from game import GameLoop;
 from services import GameService
 app = Flask(__name__)
+
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URI")
 
 db.init_app(app)
@@ -45,10 +46,15 @@ def move():
     gameloop = GameLoop()
     result = gameloop.play(chess.Board(move.get('fen')), not game.is_white, gameloop.chooseEngine(game))
     game.fen = result["fen"]
-    game.draw = result["draw"]
-    game.winner = result["winner"]
-    if game.draw or game.winner != None:
+    if result["draw"] or result["winner"] != None:
         game.game_status = GameStatus.ENDED
+        game.draw = result["draw"]
+        if result["winner"] != None:
+            if (result["winner"] == "White" and game.is_white) or (result["winner"] == "Black" and not game.is_white):
+                game.winner = game.user_uuid
+            else:
+                game.winner = game.game_engine.value
+       
     db.session.commit()
     return jsonify(GameService.serialize_game(game))
 
@@ -57,10 +63,7 @@ def resign():
     content = request.json
     game = GameService.find_game_by_id(content['game_id'])
     game.game_status = GameStatus.ENDED
-    if game.is_white:
-        game.winner = "Black"
-    else:
-        game.winner = "White"
+    game.winner = game.game_engine.value
     db.session.commit() 
     return jsonify(GameService.serialize_game(game))
     

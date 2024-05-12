@@ -23,9 +23,7 @@ const gameSlice = createSlice({
             state.gameState = {...state.gameState,...action.payload}
         },
         update_scores:(state, action) =>{
-            const newScores = [...state.scoreState,...action.payload].sort((s1,s2) => new Date(s2.created_at) - new Date(s1.created_at));
-            console.log([...newScores].filter((score, index, self) => self.findIndex(s => s.id === score.id) === index))
-            state.scoreState = [...newScores].filter((score, index, self) => self.findIndex(s => s.id === score.id) === index)
+            state.scoreState = action.payload
         },
         toggle_promotion_dialog: (state, action) =>{
             console.log(action.payload)
