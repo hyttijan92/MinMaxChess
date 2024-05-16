@@ -1,4 +1,4 @@
-const apiUrl = process.env.API_URL || "/api";
+const apiUrl = process.env.REACT_APP_API_URL || "/api";
 export const getCurrentGameApi = async(user_uuid) =>{
     console.log(process.env);
     try{
