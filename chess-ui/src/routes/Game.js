@@ -52,7 +52,7 @@ function Game() {
     else {
       movePiece(sourceSquare, targetSquare, null)
     }
-
+    setSquareStyles({})
   }
   const choosePromotion = (promotion) => {
     dispatch(toggle_promotion_dialog({ showPromotionDialog: false }))
