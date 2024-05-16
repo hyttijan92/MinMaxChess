@@ -1,6 +1,8 @@
+const apiUrl = process.env.API_URL || "/api";
 export const getCurrentGameApi = async(user_uuid) =>{
+    console.log(process.env);
     try{
-        const response = await fetch(`/api/current_game/${user_uuid}`)
+        const response = await fetch(`${apiUrl}/current_game/${user_uuid}`)
         const json = await response.json();
         return json;
     } catch(e){
@@ -10,7 +12,7 @@ export const getCurrentGameApi = async(user_uuid) =>{
 }
 export const getPreviousGamesApi = async(page) =>{
     try{
-        const response = await fetch(`/api/previous_games?page=${page}`)
+        const response = await fetch(`${apiUrl}/previous_games?page=${page}`)
         const json = await response.json();
         return json;
     } catch(e){
@@ -21,7 +23,7 @@ export const getPreviousGamesApi = async(page) =>{
 } 
 
 export const createGameApi = async(user_uuid,gameEngine,color) =>{
-    const response = await fetch("/api/create_game",{
+    const response = await fetch(`${apiUrl}/create_game`,{
         method:"POST",
         headers: {
             "Content-Type": "application/json",
@@ -44,7 +46,7 @@ export const makeGameMoveApi = async(user_uuid,game_id, fen) =>{
         fen: fen
       }
   
-      const response = await fetch("/api/move",{
+      const response = await fetch(`${apiUrl}/move`,{
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -59,7 +61,7 @@ export const resignApi = async(game_id) =>{
     const data = {
         game_id: game_id
     }
-    const response = await fetch("/api/resign",{
+    const response = await fetch(`${apiUrl}/resign`,{
         method: "POST",
         headers: {
             "Content-Type": "application/json",
