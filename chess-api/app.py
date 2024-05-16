@@ -4,8 +4,10 @@ import chess
 from models import db,GameStatus
 from game import GameLoop;
 from services import GameService
-app = Flask(__name__)
+from flask_cors import CORS
 
+app = Flask(__name__)
+CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URI")
 
 db.init_app(app)
