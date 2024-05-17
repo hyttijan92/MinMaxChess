@@ -14,11 +14,12 @@ class MinMaxEngine(AbstractEngine):
          self.depth = depth
     def decide(self):
         if self.is_white:
-            max_value = -9999999
+            max_value = -99999999
             max_move = None
-            for move in self.board.legal_moves:
+            legal_moves = list(self.board.legal_moves)
+            for move in legal_moves:
                 self.board.push(move)
-                value = self.minmax(self.board,self.depth,False)
+                value = self.minmax(self.board,self.depth-1,False)
                 if value > max_value or max_move == None:
                     max_value = value
                     max_move = move
@@ -26,11 +27,12 @@ class MinMaxEngine(AbstractEngine):
             self.board.push(max_move)
             return self.board
         else:
-            min_value = 9999999
+            min_value = 99999999
             min_move = None
-            for move in self.board.legal_moves:
+            legal_moves = list(self.board.legal_moves)
+            for move in legal_moves:
                 self.board.push(move)
-                value = self.minmax(self.board,self.depth,True)
+                value = self.minmax(self.board,self.depth-1,True)
                 if value < min_value or min_move == None:
                     min_value = value
                     min_move = move
@@ -39,17 +41,22 @@ class MinMaxEngine(AbstractEngine):
             return self.board
     def minmax(self,board: chess.Board, depth, is_player_maximizing):
         if depth == 0 or board.is_game_over():
-            return self.heuristic(board)
+            if is_player_maximizing:
+                return self.heuristic(board) - depth 
+            else:
+                return self.heuristic(board) + depth
         elif is_player_maximizing:
-            max_value = -9999999
-            for move in board.legal_moves:
+            max_value = -99999999
+            legal_moves = list(board.legal_moves)
+            for move in legal_moves:
                 board.push(move)
                 max_value = max(max_value,self.minmax(board,depth-1,False))
                 board.pop()
             return max_value
         else:
-            min_value = 9999999
-            for move in board.legal_moves:
+            min_value = 99999999
+            legal_moves = list(board.legal_moves)
+            for move in legal_moves:
                 board.push(move)
                 min_value = min(min_value,self.minmax(board,depth-1,True))
                 board.pop()

@@ -42,21 +42,21 @@ ROOK_PIECE_SQUARE_TABLES = [  0,  0,  0,  0,  0,  0,  0,  0,
  -5,  0,  0,  0,  0,  0,  0, -5,
   0,  0,  0,  5,  5,  0,  0,  0]
 class AlphaBetaEngine(AbstractEngine):
-    def __init__(self, board=..., is_white=True,depth=2):
+    def __init__(self, board=..., is_white=True,depth=3):
          super().__init__(board, is_white)
          self.depth = depth
-         self.counter = 0
     def decide(self):
-        alpha = -9999999
-        beta = 9999999
+        alpha = -99999999
+        beta = 99999999
         legal_moves = list(self.board.legal_moves)
         random.shuffle(legal_moves)
         if self.is_white:
-            max_value = -9999999
+            max_value = -99999999
             max_move = None
+            legal_moves.sort(reverse=True,key=self.sort_initial_moves)
             for move in legal_moves:
                 self.board.push(move)
-                value = self.alphabeta(self.board,self.depth,alpha,beta,False)
+                value = self.alphabeta(self.board,self.depth-1,alpha,beta,False)
                 if value > max_value or max_move == None:
                     max_value = value
                     max_move = move
@@ -67,11 +67,12 @@ class AlphaBetaEngine(AbstractEngine):
             self.board.push(max_move)
             return self.board
         else:
-            min_value = 9999999
+            min_value = 99999999
             min_move = None
+            legal_moves.sort(reverse=False,key=self.sort_initial_moves)
             for move in legal_moves:
                 self.board.push(move)
-                value = self.alphabeta(self.board,self.depth,alpha,beta,True)
+                value = self.alphabeta(self.board,self.depth-1,alpha,beta,True)
                 if value < min_value or min_move == None:
                     min_value = value
                     min_move = move
@@ -81,12 +82,19 @@ class AlphaBetaEngine(AbstractEngine):
                 beta = min(beta,min_value)
             self.board.push(min_move)
             return self.board
+    def sort_initial_moves(self,move):
+        self.board.push(move)
+        result = self.heuristic(self.board)
+        self.board.pop()
+        return result
     def alphabeta(self,board: chess.Board, depth, alpha,beta, is_player_maximizing):
         if depth == 0 or board.is_game_over():
-            self.counter+=1
-            return self.heuristic(board)
+            if is_player_maximizing:
+                return self.heuristic(board) - depth 
+            else:
+                return self.heuristic(board) + depth
         elif is_player_maximizing:
-            max_value = -9999999
+            max_value = -99999999
             for move in board.legal_moves:
                 board.push(move)
                 max_value = max(max_value,self.alphabeta(board,depth-1, alpha,beta,False))
@@ -96,7 +104,7 @@ class AlphaBetaEngine(AbstractEngine):
                 alpha = max(alpha,max_value)
             return max_value
         else:
-            min_value = 9999999
+            min_value = 99999999
             for move in board.legal_moves:
                 board.push(move)
                 min_value = min(min_value,self.alphabeta(board,depth-1,alpha,beta,True))
