@@ -1,24 +1,37 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from 'react-router-dom'
 import Header from "../components/Header";
-import { store, start_game, selectUserUUID, selectGameState } from "../stores/rootStore.js";
-import { useSelector } from "react-redux";
+import ErrorBar from "../components/ErrorBar.js";
+import { start_game, selectUserUUID, selectGameState,selectGameUIState, set_error } from "../stores/rootStore.js";
+import { useDispatch, useSelector } from "react-redux";
 import * as api from "../api/api.js";
+import { errorHandler } from "../utils/utilFunctions.js";
 function GameConfiguration() {
     const [gameEngine, setGameEngine] = useState("RANDOM")
     const [color, setColor] = useState("WHITE")
     const user_uuid = useSelector(selectUserUUID)
     const gameState = useSelector(selectGameState);
+    const gameUIState = useSelector(selectGameUIState);
     const navigate = useNavigate()
+    const dispatch = useDispatch();
 
     const handleClick = async () => {
-        const game = await api.createGameApi(user_uuid, gameEngine, color)
-        store.dispatch(start_game({ ...game, pending_move: null, ai_starts: color !== "WHITE" }))
-        navigate("/game")
+        try {
+            const game = await api.createGameApi(user_uuid, gameEngine, color)
+            await dispatch(start_game({ ...game, pending_move: null, ai_starts: color !== "WHITE" }))
+            navigate("/game")
+        }
+        catch(e){
+            dispatch(set_error({message:errorHandler(e)}))
+            setTimeout(() =>dispatch(set_error(null)),5000)
+        }
     }
     return (
         <>
             <Header />
+            {gameUIState.error &&
+            <ErrorBar/>
+            }
             <div className="container mx-auto grid justify-center">
                 {gameState === null ?
                     <>

@@ -20,8 +20,6 @@ class TestEngine(unittest.TestCase):
         test_f = lambda b: b == "1k6/3R4/8/8/8/2R5/8/4K3 b - - 1 1" or b == "1k6/8/8/8/8/2R5/1R6/4K3 b - - 1 1" 
         self.assertTrue(test_f(new_board.fen()),"Correct move was not made:1k6/3R4/8/8/8/2R5/8/4K3 b - - 1 1 or 1k6/8/8/8/8/2R5/1R6/4K3 b - - 1 1")
     
-    
-    
     def test_engine_position_3_w(self):
         test_position = "8/2k5/8/8/8/4R3/3R4/4K3 w - - 0 1"
         board = chess.Board(test_position)

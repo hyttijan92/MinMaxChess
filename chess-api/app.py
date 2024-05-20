@@ -7,7 +7,8 @@ from services import GameService
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)
+cors_origin = os.getenv("CORS_ORIGIN")
+CORS(app,origins=[cors_origin])
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URI")
 
 db.init_app(app)

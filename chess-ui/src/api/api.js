@@ -1,6 +1,5 @@
 const apiUrl = process.env.REACT_APP_API_URL || "/api";
 export const getCurrentGameApi = async(user_uuid) =>{
-    console.log(process.env);
     try{
         const response = await fetch(`${apiUrl}/current_game/${user_uuid}`)
         const json = await response.json();

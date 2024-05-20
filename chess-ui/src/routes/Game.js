@@ -7,6 +7,7 @@ import { Chess } from "chess.js";
 import Modal from '../components/Modal';
 import GameOverDialog from '../components/GameOverDialog';
 import { selectGameState, selectGameUIState, selectUserUUID, toggle_promotion_dialog, update_game, store_pending_move,resign, makeAIMove } from "../stores/rootStore";
+import ErrorBar from "../components/ErrorBar";
 
 
 function Game() {
@@ -77,7 +78,7 @@ function Game() {
       square: square,
       verbose: true
     });
-    if (moves.length !== 0) {
+    if (moves.length !== 0 && (new Chess(gameState.fen).turn() === 'w') === gameState.is_white) {
       const stylesForSquares = moves.reduce((acc, curr) => { acc[curr.to] = { backgroundColor: board.squareColor(curr.to) === 'light' ? 'yellow' : 'gold' }; return acc }, {})
       setSquareStyles(stylesForSquares)
     }
@@ -90,6 +91,9 @@ function Game() {
   return (
     <>
       <Header />
+      {gameUIState.error && 
+      <ErrorBar/>
+      }
       {gameState ?
         
         <div className="container mx-auto grid justify-center">

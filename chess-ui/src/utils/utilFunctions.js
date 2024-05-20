@@ -16,3 +16,12 @@ export const getUserState = () =>{
         return userState;
     }
 }
+export const errorHandler = (error) =>{
+
+    switch(error.message){
+        case "Failed to fetch":
+            return "Connection error. Try refreshing the page."
+        default:
+            return "Unknown error."
+    }
+}
