@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from 'react-router-dom'
 import Header from "../components/Header";
+import Loading from "../components/Loading";
 import ErrorBar from "../components/ErrorBar.js";
-import { start_game, selectUserUUID, selectGameState,selectGameUIState, set_error } from "../stores/rootStore.js";
+import { start_game, selectUserUUID, selectGameState,selectGameUIState, set_error, set_loading } from "../stores/rootStore.js";
 import { useDispatch, useSelector } from "react-redux";
 import * as api from "../api/api.js";
 import { errorHandler } from "../utils/utilFunctions.js";
@@ -17,14 +18,18 @@ function GameConfiguration() {
 
     const handleClick = async () => {
         try {
+            dispatch(set_loading(true))
             const game = await api.createGameApi(user_uuid, gameEngine, color)
             await dispatch(start_game({ ...game, pending_move: null, ai_starts: color !== "WHITE" }))
+            dispatch(set_loading(false))
             navigate("/game")
         }
         catch(e){
             dispatch(set_error({message:errorHandler(e)}))
+            dispatch(set_loading(false))
             setTimeout(() =>dispatch(set_error(null)),5000)
         }
+        
     }
     return (
         <>
@@ -42,6 +47,7 @@ function GameConfiguration() {
                                 <option value="RANDOM">Random</option>
                                 <option value="MINMAX">MinMax</option>
                                 <option value="ALPHABETA">AlphaBeta</option>
+                                <option value="ITERATIVEDEEPENING">Iterative deepening</option>
                             </select>
                         </div>
                         <div className="mb-4">
@@ -64,6 +70,7 @@ function GameConfiguration() {
                     </>
                 }
             </div>
+            <Loading/>
         </>
     )
 }

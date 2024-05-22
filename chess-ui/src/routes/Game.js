@@ -2,6 +2,7 @@ import { Navigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import Header from '../components/Header';
+import Loading from "../components/Loading";
 import Chessboard from 'chessboardjsx';
 import { Chess } from "chess.js";
 import Modal from '../components/Modal';
@@ -95,7 +96,7 @@ function Game() {
       <ErrorBar/>
       }
       {gameState ?
-        
+        <>
         <div className="container mx-auto grid justify-center">
           {gameUIState.showPromotionDialog &&
             <Modal choosePromotion={choosePromotion} />
@@ -115,6 +116,8 @@ function Game() {
           />
           <button onClick={handleResign} className={'bg-gray-500 text-xl'}>Resign</button>
         </div>
+        <Loading/>
+        </>
         :
         <Navigate to="/" replace />
       }

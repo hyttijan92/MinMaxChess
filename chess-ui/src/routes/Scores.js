@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import Header from "../components/Header";
+import Loading from "../components/Loading";
 import { useEffect } from 'react';
 import { selectScoreState, updateScoreState } from "../stores/rootStore";
 function Scores() {
@@ -45,7 +46,7 @@ function Scores() {
                     <button  className={'bg-gray-300 text-xl border-gray-350 border-solid border-2 rounded'} onClick={() => setPage(page + 1)}>Next page</button>
                 }
             </div>
-
+            <Loading/>
         </>
     )
 }
