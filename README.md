@@ -1,5 +1,9 @@
 # Min Max chess
 
-* Allows to play chess against three different AIs
+* Allows to play chess against four different AIs
 
 * To test the app click [this!](https://minmaxchess.onrender.com/)
+
+* To run the application locally in development mode, run in root folder: docker compose up
+
+* To run the application locally in production mode, run in root folder: docker compose -f docker-compose.prod.yml up
