@@ -2,16 +2,19 @@ from . import AbstractEngine
 import chess
 CHESS_PIECE_VALUES = {
     chess.PAWN: 1,
-    chess.KNIGHT:3,
-    chess.BISHOP:3,
+    chess.KNIGHT: 3,
+    chess.BISHOP: 3,
     chess.ROOK: 5,
     chess.QUEEN: 8,
     chess.KING: 9999
 }
+
+
 class MinMaxEngine(AbstractEngine):
-    def __init__(self, board=..., is_white=True,depth=2):
-         super().__init__(board, is_white)
-         self.depth = depth
+    def __init__(self, board=..., is_white=True, depth=2):
+        super().__init__(board, is_white)
+        self.depth = depth
+
     def decide(self):
         if self.is_white:
             max_value = -99999999
@@ -19,7 +22,7 @@ class MinMaxEngine(AbstractEngine):
             legal_moves = list(self.board.legal_moves)
             for move in legal_moves:
                 self.board.push(move)
-                value = self.minmax(self.board,self.depth-1,False)
+                value = self.minmax(self.board, self.depth-1, False)
                 if value > max_value or max_move == None:
                     max_value = value
                     max_move = move
@@ -32,17 +35,18 @@ class MinMaxEngine(AbstractEngine):
             legal_moves = list(self.board.legal_moves)
             for move in legal_moves:
                 self.board.push(move)
-                value = self.minmax(self.board,self.depth-1,True)
+                value = self.minmax(self.board, self.depth-1, True)
                 if value < min_value or min_move == None:
                     min_value = value
                     min_move = move
                 self.board.pop()
             self.board.push(min_move)
             return self.board
-    def minmax(self,board: chess.Board, depth, is_player_maximizing):
+
+    def minmax(self, board: chess.Board, depth, is_player_maximizing):
         if depth == 0 or board.is_game_over():
             if is_player_maximizing:
-                return self.heuristic(board) - depth 
+                return self.heuristic(board) - depth
             else:
                 return self.heuristic(board) + depth
         elif is_player_maximizing:
@@ -50,7 +54,7 @@ class MinMaxEngine(AbstractEngine):
             legal_moves = list(board.legal_moves)
             for move in legal_moves:
                 board.push(move)
-                max_value = max(max_value,self.minmax(board,depth-1,False))
+                max_value = max(max_value, self.minmax(board, depth-1, False))
                 board.pop()
             return max_value
         else:
@@ -58,7 +62,7 @@ class MinMaxEngine(AbstractEngine):
             legal_moves = list(board.legal_moves)
             for move in legal_moves:
                 board.push(move)
-                min_value = min(min_value,self.minmax(board,depth-1,True))
+                min_value = min(min_value, self.minmax(board, depth-1, True))
                 board.pop()
             return min_value
 

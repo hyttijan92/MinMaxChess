@@ -116,6 +116,23 @@ export const resign = (game_id) =>{
         }
     }
 }
+
+export const draw = (game_id) =>{
+    return async (dispatch) =>{
+        try{
+            dispatch(set_loading(true))
+            const game = await api.drawApi(game_id)
+            dispatch(update_game(game))
+        }
+        catch(e){
+            dispatch(set_error({message: errorHandler(e)}))
+            setTimeout(() => dispatch(set_error(null)),5000)
+        }
+        finally{
+            dispatch(set_loading(false))
+        }
+    }
+}
 export const selectGameState = state => state.gameState
 export const selectGameUIState = state => state.gameUIState
 export const selectUserUUID = state => state.userState.user_uuid

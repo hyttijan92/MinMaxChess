@@ -7,7 +7,7 @@ import Chessboard from 'chessboardjsx';
 import { Chess } from "chess.js";
 import Modal from '../components/Modal';
 import GameOverDialog from '../components/GameOverDialog';
-import { selectGameState, selectGameUIState, selectUserUUID, toggle_promotion_dialog, update_game, store_pending_move,resign, makeAIMove } from "../stores/rootStore";
+import { selectGameState, selectGameUIState, selectUserUUID, toggle_promotion_dialog, update_game, store_pending_move,resign, draw, makeAIMove } from "../stores/rootStore";
 import ErrorBar from "../components/ErrorBar";
 
 
@@ -87,6 +87,9 @@ function Game() {
   const handleResign = () =>{
     dispatch(resign(gameState.id))
   }
+  const handleDraw = () =>{
+    dispatch(draw(gameState.id))
+  }
 
 
   return (
@@ -115,6 +118,7 @@ function Game() {
             calcWidth={({ screenWidth, screenHeight }) => { return screenWidth > screenHeight ? (screenHeight * 0.75) : (screenWidth * 0.75) }}
           />
           <button onClick={handleResign} className={'bg-gray-500 text-xl'}>Resign</button>
+          {new Chess(gameState.fen).isDraw() &&<button onClick={handleDraw} className={'bg-gray-200 text-xl'}>Claim draw</button>}
         </div>
         <Loading/>
         </>

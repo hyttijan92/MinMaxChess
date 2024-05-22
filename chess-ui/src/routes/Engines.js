@@ -8,7 +8,7 @@ function Engines() {
             <Header />
             <div className="container mx-auto grid justify-center">
                 <h1 className={"text-2xl"}>Chess engines</h1>
-                <p>There are three chess engines to compete against: MinMax engine, AlphaBeta engine and Random engine. </p>
+                <p>There are four chess engines to compete against: MinMax engine, AlphaBeta engine, Iterative deepening engine and Random engine. </p>
                 <h2 className={"text-xl"}>MinMax engine</h2>
                 <p>The Minimax algorithm is a decision-making algorithm commonly used in two-player turn-based games such as chess or tic-tac-toe. It operates by recursively evaluating possible future moves and outcomes. At each level of the game tree, it alternates between maximizing the player's score (if it's the player's turn) and minimizing the opponent's score (if it's the opponent's turn). This process continues until a terminal state or a predetermined depth is reached. Ultimately, the algorithm selects the move that leads to the best possible outcome for the player, assuming optimal play from both players.</p>
                 <img src={Minmax} alt="Minmax" />
@@ -27,6 +27,8 @@ function Engines() {
                 <code className=" rounded-lg block p-4 bg-gray-900 text-gray-100 whitespace-pre overflow-x-scroll">
                     {heuristicAlphaBeta}
                 </code>
+                <h2 className={"text-xl"}>Iterative deepening engine</h2>
+                <p> Iterative deepening engine uses alpha beta pruning. It performs a series of depth-limited searches, gradually increasing the search depth with each iteration until time constraints are met. This approach ensures the engine can quickly provide a move by using results from shallower searches, while still exploring deeper positions to improve decision quality as time allows.</p>
                 <h2 className={"text-xl"}>Random engine</h2>
                 <p>Random chooses random move from all the possible moves. The engine serves mostly for testing purpouses.</p>
                 <h2 className={"text-xl"}>Decision function of the Random engine</h2>

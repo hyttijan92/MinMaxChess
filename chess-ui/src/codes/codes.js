@@ -18,7 +18,8 @@ export const heuristicMinMax =`    def heuristic(self, board: chess.Board):
         return white_score-black_score`
 
 
-export const heuristicAlphaBeta = `def heuristic(self, board: chess.Board):
+export const heuristicAlphaBeta = `
+def heuristic(self, board: chess.Board):
     white_score = 0
     black_score = 0
     if board.is_checkmate():
@@ -33,24 +34,24 @@ export const heuristicAlphaBeta = `def heuristic(self, board: chess.Board):
         if piece is not None:
             if piece.color == chess.WHITE:
                 white_score += CHESS_PIECE_VALUES[piece.piece_type]
-                if(piece.piece_type == chess.PAWN):
-                    white_score+=PAWN_PIECE_SQUARE_TABLES[square]
-                elif(piece.piece_type == chess.KNIGHT):
-                    white_score+=KNIGHT_PIECE_SQUARE_TABLES[square]
-                elif(piece.piece_type == chess.BISHOP):
-                    white_score+=BISHOP_PIECE_SQUARE_TABLES[square]
-                elif(piece.piece_type == chess.ROOK):
-                    white_score+=ROOK_PIECE_SQUARE_TABLES[square]
+                if (piece.piece_type == chess.PAWN):
+                    white_score += PAWN_PIECE_SQUARE_TABLES_WHITE[square]
+                elif (piece.piece_type == chess.KNIGHT):
+                    white_score += KNIGHT_PIECE_SQUARE_TABLES_WHITE[square]
+                elif (piece.piece_type == chess.BISHOP):
+                    white_score += BISHOP_PIECE_SQUARE_TABLES_WHITE[square]
+                elif (piece.piece_type == chess.ROOK):
+                    white_score += ROOK_PIECE_SQUARE_TABLES_WHITE[square]
             else:
                 black_score += CHESS_PIECE_VALUES[piece.piece_type]
-                if(piece.piece_type == chess.PAWN):
-                    black_score+=PAWN_PIECE_SQUARE_TABLES[square]
-                elif(piece.piece_type == chess.KNIGHT):
-                    black_score+=KNIGHT_PIECE_SQUARE_TABLES[square]
-                elif(piece.piece_type == chess.BISHOP):
-                    black_score+=BISHOP_PIECE_SQUARE_TABLES[square]
-                elif(piece.piece_type == chess.ROOK):
-                    black_score+=ROOK_PIECE_SQUARE_TABLES[square]
+                if (piece.piece_type == chess.PAWN):
+                    black_score += PAWN_PIECE_SQUARE_TABLES_BLACK[square]
+                elif (piece.piece_type == chess.KNIGHT):
+                    black_score += KNIGHT_PIECE_SQUARE_TABLES_BLACK[square]
+                elif (piece.piece_type == chess.BISHOP):
+                    black_score += BISHOP_PIECE_SQUARE_TABLES_BLACK[square]
+                elif (piece.piece_type == chess.ROOK):
+                    black_score += ROOK_PIECE_SQUARE_TABLES_BLACK[square]
 
     return white_score-black_score`
 

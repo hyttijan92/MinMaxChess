@@ -78,6 +78,15 @@ def resign():
     db.session.commit() 
     return jsonify(GameService.serialize_game(game))
 
+@app.route("/draw", methods=['POST'])
+def draw():
+    content = request.json
+    game = GameService.find_game_by_id(content['game_id'])
+    game.game_status = GameStatus.ENDED
+    game.draw = True
+    db.session.commit() 
+    return jsonify(GameService.serialize_game(game))
+
 
 if __name__ == "__main__":
 

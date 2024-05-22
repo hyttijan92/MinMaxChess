@@ -70,3 +70,17 @@ export const resignApi = async(game_id) =>{
     const json = await response.json();
     return json;
 }
+export const drawApi = async(game_id) =>{
+    const data = {
+        game_id: game_id
+    }
+    const response = await fetch(`${apiUrl}/draw`,{
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data)
+    })
+    const json = await response.json();
+    return json;
+}
