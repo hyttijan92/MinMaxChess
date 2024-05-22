@@ -65,9 +65,11 @@ ROOK_PIECE_SQUARE_TABLES = [  0,  0,  0,  0,  0,  0,  0,  0,
  -5,  0,  0,  0,  0,  0,  0, -5,
   0,  0,  0,  5,  5,  0,  0,  0]
 class AlphaBetaEngine(AbstractEngine):
-    def __init__(self, board=..., is_white=True,depth=3):
+    def __init__(self, board=..., is_white=True,depth=3,start=datetime.datetime.now()):
          super().__init__(board, is_white)
          self.depth = depth
+         self.start = start
+         self.timeout = False
     def decide(self):
         alpha = -99999999
         beta = 99999999
@@ -111,7 +113,11 @@ class AlphaBetaEngine(AbstractEngine):
         self.board.pop()
         return result
     def alphabeta(self,board: chess.Board, depth, alpha,beta, is_player_maximizing):
-        if depth == 0 or board.is_game_over():
+        end = datetime.datetime.now()
+        if (end-self.start).total_seconds() > 10:
+            self.timeout = True
+            return 0
+        elif depth == 0 or board.is_game_over():
             if is_player_maximizing:
                 return self.heuristic(board) - depth 
             else:
