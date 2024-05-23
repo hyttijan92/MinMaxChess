@@ -21,21 +21,11 @@ class IterativeDeepeningEngine(AbstractEngine):
 
         for i in range(self.depth, self.max_depth):
             prev_board = board
-            prev_value = value
             agent = AlphaBetaEngine2(copy.deepcopy(
                 self.board), self.is_white, i, start)
-            (board, value) = agent.decide()
+            board = agent.decide()
             if agent.timeout:
-                if self.is_white:
-                    if value > prev_value:
-                        return board
-                    else:
-                        return prev_board
-                else:
-                    if value < prev_value:
-                        return board
-                    else:
-                        return prev_board
+                return prev_board
         return board
 
 
@@ -104,6 +94,8 @@ class AlphaBetaEngine2(AbstractEngine):
             max_move = None
             legal_moves.sort(reverse=True, key=self.sort_initial_moves)
             for move in legal_moves:
+                if self.timeout:
+                    return
                 self.board.push(move)
                 value = self.alphabeta(
                     self.board, self.depth-1, alpha, beta, False)
@@ -115,12 +107,14 @@ class AlphaBetaEngine2(AbstractEngine):
                     break
                 alpha = max(alpha, max_value)
             self.board.push(max_move)
-            return (self.board, max_value)
+            return self.board
         else:
             min_value = 99999999
             min_move = None
             legal_moves.sort(reverse=False, key=self.sort_initial_moves)
             for move in legal_moves:
+                if self.timeout:
+                    return
                 self.board.push(move)
                 value = self.alphabeta(
                     self.board, self.depth-1, alpha, beta, True)
@@ -132,7 +126,7 @@ class AlphaBetaEngine2(AbstractEngine):
                     break
                 beta = min(beta, min_value)
             self.board.push(min_move)
-            return (self.board, min_value)
+            return self.board
 
     def sort_initial_moves(self, move):
         self.board.push(move)
