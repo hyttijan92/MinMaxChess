@@ -5,13 +5,15 @@ from engines import (
     RandomEngine,
     IterativeDeepeningEngine
 )
-from models import GameEngine
+from models import GameEngine, Game
 import chess
 
 
 class GameLoop:
 
-    def play(self, board: chess.Board, engine_is_white, Engine: AbstractEngine):
+    def play(self, board: chess.Board, game: Game):
+        Engine = self.choose_engine(game)
+        engine_is_white = not game.is_white
         status = self.check_status_of_game(board)
         if status["draw"] is False and status["winner"] is None:
             engine = Engine(board, engine_is_white)
@@ -26,7 +28,7 @@ class GameLoop:
         else:
             return {"fen": board.fen(), "is_checkmate": False, "draw": False, "winner": None}
 
-    def chooseEngine(self, game):
+    def choose_engine(self, game: Game):
         engine = None
         if game.game_engine == GameEngine.ITERATIVEDEEPENING:
             engine = IterativeDeepeningEngine

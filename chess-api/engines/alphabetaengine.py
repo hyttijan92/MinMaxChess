@@ -9,7 +9,7 @@ CHESS_PIECE_VALUES = {
     chess.QUEEN: 900,
     chess.KING: 99999
 }
-PAWN_PIECE_SQUARE_TABLES_WHITE = [0,  0,  0,  0,  0,  0,  0,  0,
+PAWN_PIECE_SQUARE_TABLES_BLACK = [0,  0,  0,  0,  0,  0,  0,  0,
                                   50, 50, 50, 50, 50, 50, 50, 50,
                                   10, 10, 20, 30, 30, 20, 10, 10,
                                   5,  5, 10, 25, 25, 10,  5,  5,
@@ -17,8 +17,8 @@ PAWN_PIECE_SQUARE_TABLES_WHITE = [0,  0,  0,  0,  0,  0,  0,  0,
                                   5, -5, -10,  0,  0, -10, -5,  5,
                                   5, 10, 10, -20, -20, 10, 10,  5,
                                   0,  0,  0,  0,  0,  0,  0,  0]
-PAWN_PIECE_SQUARE_TABLES_BLACK = PAWN_PIECE_SQUARE_TABLES_WHITE[::-1]
-KNIGHT_PIECE_SQUARE_TABLES_WHITE = [-50, -40, -30, -30, -30, -30, -40, -50,
+PAWN_PIECE_SQUARE_TABLES_WHITE = PAWN_PIECE_SQUARE_TABLES_BLACK[::-1]
+KNIGHT_PIECE_SQUARE_TABLES_BLACK = [-50, -40, -30, -30, -30, -30, -40, -50,
                                     -40, -20,  0,  0,  0,  0, -20, -40,
                                     -30,  0, 10, 15, 15, 10,  0, -30,
                                     -30,  5, 15, 20, 20, 15,  5, -30,
@@ -26,8 +26,8 @@ KNIGHT_PIECE_SQUARE_TABLES_WHITE = [-50, -40, -30, -30, -30, -30, -40, -50,
                                     -30,  5, 10, 15, 15, 10,  5, -30,
                                     -40, -20,  0,  5,  5,  0, -20, -40,
                                     -50, -40, -30, -30, -30, -30, -40, -50]
-KNIGHT_PIECE_SQUARE_TABLES_BLACK = KNIGHT_PIECE_SQUARE_TABLES_WHITE[::-1]
-BISHOP_PIECE_SQUARE_TABLES_WHITE = [-20, -10, -10, -10, -10, -10, -10, -20,
+KNIGHT_PIECE_SQUARE_TABLES_WHITE = KNIGHT_PIECE_SQUARE_TABLES_BLACK[::-1]
+BISHOP_PIECE_SQUARE_TABLES_BLACK = [-20, -10, -10, -10, -10, -10, -10, -20,
                                     -10,  0,  0,  0,  0,  0,  0, -10,
                                     -10,  0,  5, 10, 10,  5,  0, -10,
                                     -10,  5,  5, 10, 10,  5,  5, -10,
@@ -36,8 +36,8 @@ BISHOP_PIECE_SQUARE_TABLES_WHITE = [-20, -10, -10, -10, -10, -10, -10, -20,
                                     -10,  5,  0,  0,  0,  0,  5, -10,
                                     -20, -10, -10, -10, -10, -10, -10, -20]
 
-BISHOP_PIECE_SQUARE_TABLES_BLACK = BISHOP_PIECE_SQUARE_TABLES_WHITE[::-1]
-ROOK_PIECE_SQUARE_TABLES_WHITE = [0,  0,  0,  0,  0,  0,  0,  0,
+BISHOP_PIECE_SQUARE_TABLES_WHITE = BISHOP_PIECE_SQUARE_TABLES_BLACK[::-1]
+ROOK_PIECE_SQUARE_TABLES_BLACK = [0,  0,  0,  0,  0,  0,  0,  0,
                                   5, 10, 10, 10, 10, 10, 10,  5,
                                   -5,  0,  0,  0,  0,  0,  0, -5,
                                   -5,  0,  0,  0,  0,  0,  0, -5,
@@ -45,7 +45,7 @@ ROOK_PIECE_SQUARE_TABLES_WHITE = [0,  0,  0,  0,  0,  0,  0,  0,
                                   -5,  0,  0,  0,  0,  0,  0, -5,
                                   -5,  0,  0,  0,  0,  0,  0, -5,
                                   0,  0,  0,  5,  5,  0,  0,  0]
-ROOK_PIECE_SQUARE_TABLES_BLACK = ROOK_PIECE_SQUARE_TABLES_WHITE[::-1]
+ROOK_PIECE_SQUARE_TABLES_WHITE = ROOK_PIECE_SQUARE_TABLES_BLACK[::-1]
 
 
 class AlphaBetaEngine(AbstractEngine):

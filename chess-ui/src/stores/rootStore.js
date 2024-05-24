@@ -1,135 +1,135 @@
-import {createSlice, configureStore} from "@reduxjs/toolkit";
-import { getUserState,errorHandler } from "../utils/utilFunctions";
+import { createSlice, configureStore } from "@reduxjs/toolkit";
+import { getUserState, errorHandler } from "../utils/utilFunctions";
 import * as api from "../api/api.js";
 const gameSlice = createSlice({
     name: 'game',
     initialState: {
-        userState:getUserState(),
+        userState: getUserState(),
         gameState: null,
-        gameUIState:{
+        gameUIState: {
             showPromotionDialog: false,
             showEndingDialog: false,
             error: null,
-            loading: false       
+            loading: false
         },
         scoreState: []
     },
-    reducers :{
-        start_game: (state, action) =>{
+    reducers: {
+        startGame: (state, action) => {
             state.gameState = action.payload
         },
-        reset_game: (state) =>{
+        resetGame: (state) => {
             state.gameState = null;
         },
-        update_game:(state, action) =>{
-            state.gameState = {...state.gameState,...action.payload}
+        updateGame: (state, action) => {
+            state.gameState = { ...state.gameState, ...action.payload }
         },
-        update_scores:(state, action) =>{
+        updateScores: (state, action) => {
             state.scoreState = action.payload
         },
-        toggle_promotion_dialog: (state, action) =>{
+        togglePromotionDialog: (state, action) => {
             state.gameUIState.showPromotionDialog = action.payload.showPromotionDialog
         },
-        store_pending_move: (state, action) =>{
+        storePendingMove: (state, action) => {
             state.gameState.pendingMove = action.payload
         },
-        set_error: (state, action) =>{
+        setError: (state, action) => {
             state.gameUIState.error = action.payload
         },
-        set_loading: (state, action) =>{
+        setLoading: (state, action) => {
             state.gameUIState.loading = action.payload
         }
     }
 })
 
-export const {start_game, update_game, store_pending_move,toggle_promotion_dialog,update_scores,reset_game, set_error, set_loading} = gameSlice.actions;
+export const { startGame, updateGame, storePendingMove, togglePromotionDialog, updateScores, resetGame, setError, setLoading } = gameSlice.actions;
 
 export const store = configureStore({
     reducer: gameSlice.reducer
 });
 
 
-export const initializeGameState = (user_uuid) =>{
+export const initializeGameState = (user_uuid) => {
     return async (dispatch) => {
         try {
-            dispatch(set_loading(true))
+            dispatch(setLoading(true))
             const game = await api.getCurrentGameApi(user_uuid)
-            dispatch(start_game(game))
+            dispatch(startGame(game))
         }
-        catch(e){
-            dispatch(set_error({message: errorHandler(e)}))
-            setTimeout(() => dispatch(set_error(null)),5000)
+        catch (e) {
+            dispatch(setError({ message: errorHandler(e) }))
+            setTimeout(() => dispatch(setError(null)), 5000)
         }
-        finally{
-            dispatch(set_loading(false))
+        finally {
+            dispatch(setLoading(false))
         }
-    
+
     }
 }
-export const updateScoreState = (page) =>{
-    return async (dispatch) =>{
-        try{
-            dispatch(set_loading(true))
+export const updateScoreState = (page) => {
+    return async (dispatch) => {
+        try {
+            dispatch(setLoading(true))
             const scores = await api.getPreviousGamesApi(page)
-            dispatch(update_scores(scores))
+            dispatch(updateScores(scores))
         }
-        catch(e){
-            dispatch(set_error({message: errorHandler(e)}))
-            setTimeout(() => dispatch(set_error(null)),5000)
+        catch (e) {
+            dispatch(setError({ message: errorHandler(e) }))
+            setTimeout(() => dispatch(setError(null)), 5000)
         }
-        finally{
-            dispatch(set_loading(false))
+        finally {
+            dispatch(setLoading(false))
         }
     }
 }
-export const makeAIMove = (user_uuid,id,fen) =>{
+export const makeAIMove = (user_uuid, id, fen) => {
 
-    return async (dispatch) =>{
-        try{
-            dispatch(set_loading(true))
+    return async (dispatch) => {
+        try {
+            dispatch(setLoading(true))
             const game = await api.makeGameMoveApi(user_uuid, id, fen)
-            dispatch(update_game(game))
+            dispatch(updateGame(game))
         }
-        catch(e){
-            dispatch(set_error({message: errorHandler(e)}))
-            setTimeout(() => dispatch(set_error(null)),5000)
+        catch (e) {
+            dispatch(setError({ message: errorHandler(e) }))
+            setTimeout(() => dispatch(setError(null)), 5000)
 
         }
-        finally{
-            dispatch(set_loading(false))
+        finally {
+            dispatch(setLoading(false))
         }
     }
 }
-export const resign = (game_id) =>{
-    return async (dispatch) =>{
-        try{
-            dispatch(set_loading(true))
+export const resign = (game_id) => {
+    return async (dispatch) => {
+        try {
+            dispatch(setLoading(true))
             const game = await api.resignApi(game_id)
-            dispatch(update_game(game))
+            dispatch(updateGame(game))
         }
-        catch(e){
-            dispatch(set_error({message: errorHandler(e)}))
-            setTimeout(() => dispatch(set_error(null)),5000)
+        catch (e) {
+            dispatch(setError({ message: errorHandler(e) }))
+            setTimeout(() => dispatch(setError(null)), 5000)
         }
-        finally{
-            dispatch(set_loading(false))
+        finally {
+            dispatch(setLoading(false))
         }
     }
 }
 
-export const draw = (game_id) =>{
-    return async (dispatch) =>{
-        try{
-            dispatch(set_loading(true))
+export const draw = (game_id) => {
+    return async (dispatch) => {
+        try {
+            dispatch(setLoading(true))
             const game = await api.drawApi(game_id)
-            dispatch(update_game(game))
+            dispatch(updateGame(game))
         }
-        catch(e){
-            dispatch(set_error({message: errorHandler(e)}))
-            setTimeout(() => dispatch(set_error(null)),5000)
+        catch (e) {
+            dispatch(setError({ message: errorHandler(e) }))
+            setTimeout(() => dispatch(setError(null)), 5000)
         }
-        finally{
-            dispatch(set_loading(false))
+        finally {
+            dispatch(setLoading(false))
         }
     }
 }

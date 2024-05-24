@@ -7,7 +7,7 @@ import Chessboard from 'chessboardjsx';
 import { Chess } from "chess.js";
 import Modal from '../components/Modal';
 import GameOverDialog from '../components/GameOverDialog';
-import { selectGameState, selectGameUIState, selectUserUUID, toggle_promotion_dialog, update_game, store_pending_move,resign, draw, makeAIMove } from "../stores/rootStore";
+import { selectGameState, selectGameUIState, selectUserUUID, togglePromotionDialog, updateGame, storePendingMove,resign, draw, makeAIMove } from "../stores/rootStore";
 import ErrorBar from "../components/ErrorBar";
 
 
@@ -22,7 +22,7 @@ function Game() {
   useEffect(() => {
     async function gameStart() {
       if (gameState && gameState.ai_starts) {
-        dispatch(update_game({ ai_starts: false }))
+        dispatch(updateGame({ ai_starts: false }))
         dispatch(makeAIMove(user_uuid,gameState.id, new Chess(gameState.fen).fen()))
       }
     }
@@ -48,8 +48,8 @@ function Game() {
   const handleDrop = ({ sourceSquare, targetSquare, piece }) => {
     if (checkIfPromoted(sourceSquare, targetSquare, piece)) {
 
-      dispatch(store_pending_move({ sourceSquare: sourceSquare, targetSquare: targetSquare }))
-      dispatch(toggle_promotion_dialog({ showPromotionDialog: true }))
+      dispatch(storePendingMove({ sourceSquare: sourceSquare, targetSquare: targetSquare }))
+      dispatch(togglePromotionDialog({ showPromotionDialog: true }))
     }
     else {
       movePiece(sourceSquare, targetSquare, null)
@@ -57,15 +57,15 @@ function Game() {
     setSquareStyles({})
   }
   const choosePromotion = (promotion) => {
-    dispatch(toggle_promotion_dialog({ showPromotionDialog: false }))
+    dispatch(togglePromotionDialog({ showPromotionDialog: false }))
     movePiece(gameState.pendingMove.sourceSquare, gameState.pendingMove.targetSquare, promotion)
-    dispatch(store_pending_move(null))
+    dispatch(storePendingMove(null))
   }
   const movePiece = async (sourceSquare, targetSquare, promotion = null) => {
     try {
       const board = new Chess(gameState.fen)
       board.move({ from: sourceSquare, to: targetSquare, promotion: promotion })
-      dispatch(update_game({ fen: board.fen() }))
+      dispatch(updateGame({ fen: board.fen() }))
       dispatch(makeAIMove(user_uuid,gameState.id,board.fen()))
     }
     catch (e) {

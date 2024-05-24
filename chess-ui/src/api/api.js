@@ -2,21 +2,36 @@ const apiUrl = process.env.REACT_APP_API_URL || "/api";
 export const getCurrentGameApi = async(user_uuid) =>{
     try{
         const response = await fetch(`${apiUrl}/current_game/${user_uuid}`)
-        const json = await response.json();
-        return json;
+        if (response.status === 200){
+            const json = await response.json();
+            return json;
+        }
+        else if(response.status === 404){
+            return null;
+        }
+        else{
+            throw new Error(response.code)
+        }
     } catch(e){
-        return null;
+        return e;
     }
     
 }
 export const getPreviousGamesApi = async(page) =>{
     try{
         const response = await fetch(`${apiUrl}/previous_games?page=${page}`)
-        const json = await response.json();
-        return json;
+        if(response.status === 200){            
+            const json = await response.json();
+            return json;
+        }
+        else if(response.status === 404){
+            return [];
+        }
+        else{
+            throw new Error(response.code)
+        }
     } catch(e){
-        console.log(e)
-        return [];
+        return e;
     }
     
 } 

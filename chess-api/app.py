@@ -1,6 +1,8 @@
-from flask import Flask, request, jsonify, Response
+from flask import Flask, request, jsonify, Response,abort
+import werkzeug
 import os
 import chess
+import werkzeug.exceptions
 from models import db, GameStatus
 from game import GameLoop
 from services import GameService
@@ -18,13 +20,12 @@ db.init_app(app)
 def current_game(user_uuid):
     current_game = GameService.find_most_recent_ongoing_game_by_user_uuid(
         user_uuid=user_uuid
-        )
-    if current_game is not None:
-        game_json = GameService.serialize_game(current_game)
-        return jsonify(game_json)
-    else:
-        return Response(status=404)
-
+    )
+    if current_game is None:
+        abort(404)
+    game_json = GameService.serialize_game(current_game)
+    return jsonify(game_json)
+    
 
 @app.route("/previous_games", methods=['GET'])
 def previous_games():
@@ -38,11 +39,11 @@ def previous_games():
 def create_game():
     new_game = request.json
     game = GameService.create_game(new_game)
-    game_json = GameService.serialize_game(game)
     if game:
+        game_json = GameService.serialize_game(game)
         return jsonify(game_json)
     else:
-        return Response(status=400)
+        abort(400)
 
 
 @app.route("/move", methods=['POST'])
@@ -50,10 +51,7 @@ def move():
     move = request.json
     game = GameService.find_game_by_id(move['game_id'])
     gameloop = GameLoop()
-    result = gameloop.play(chess.Board(move.get('fen')),
-                           not game.is_white,
-                           gameloop.chooseEngine(game)
-                           )
+    result = gameloop.play(chess.Board(move.get('fen')), game)
     game.fen = result["fen"]
     if result["draw"] or result["winner"] is not None:
         game.game_status = GameStatus.ENDED
@@ -64,7 +62,6 @@ def move():
                 game.winner = game.user_uuid
             else:
                 game.winner = game.game_engine.value
-       
     db.session.commit()
     return jsonify(GameService.serialize_game(game))
 
@@ -75,8 +72,9 @@ def resign():
     game = GameService.find_game_by_id(content['game_id'])
     game.game_status = GameStatus.ENDED
     game.winner = game.game_engine.value
-    db.session.commit() 
+    db.session.commit()
     return jsonify(GameService.serialize_game(game))
+
 
 @app.route("/draw", methods=['POST'])
 def draw():
@@ -84,8 +82,20 @@ def draw():
     game = GameService.find_game_by_id(content['game_id'])
     game.game_status = GameStatus.ENDED
     game.draw = True
-    db.session.commit() 
+    db.session.commit()
     return jsonify(GameService.serialize_game(game))
+
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    if isinstance(e, werkzeug.exceptions.HTTPException):
+        return jsonify({
+            "code": e.code,
+            "name": e.name,
+            "description": e.description
+        }), e.code
+    else:
+        return jsonify({"code": 500, "name": "Internal Server error", "description": "Internal Server error"}), 500
 
 
 if __name__ == "__main__":

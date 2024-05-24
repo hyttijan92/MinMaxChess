@@ -21,6 +21,8 @@ export const errorHandler = (error) =>{
     switch(error.message){
         case "Failed to fetch":
             return "Connection error. Try refreshing the page."
+        case "400":
+            return "Bad request was made."
         default:
             return "Unknown error."
     }

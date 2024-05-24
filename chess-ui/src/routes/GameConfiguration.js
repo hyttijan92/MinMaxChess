@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import Header from "../components/Header";
 import Loading from "../components/Loading";
 import ErrorBar from "../components/ErrorBar.js";
-import { start_game, selectUserUUID, selectGameState,selectGameUIState, set_error, set_loading } from "../stores/rootStore.js";
+import { startGame, selectUserUUID, selectGameState,selectGameUIState, setError, setLoading } from "../stores/rootStore.js";
 import { useDispatch, useSelector } from "react-redux";
 import * as api from "../api/api.js";
 import { errorHandler } from "../utils/utilFunctions.js";
@@ -18,16 +18,16 @@ function GameConfiguration() {
 
     const handleClick = async () => {
         try {
-            dispatch(set_loading(true))
+            dispatch(setLoading(true))
             const game = await api.createGameApi(user_uuid, gameEngine, color)
-            await dispatch(start_game({ ...game, pending_move: null, ai_starts: color !== "WHITE" }))
-            dispatch(set_loading(false))
+            await dispatch(startGame({ ...game, pendingMove: null, aiStarts: color !== "WHITE" }))
+            dispatch(setLoading(false))
             navigate("/game")
         }
         catch(e){
-            dispatch(set_error({message:errorHandler(e)}))
-            dispatch(set_loading(false))
-            setTimeout(() =>dispatch(set_error(null)),5000)
+            dispatch(setError({message:errorHandler(e)}))
+            dispatch(setLoading(false))
+            setTimeout(() =>dispatch(setError(null)),5000)
         }
         
     }
