@@ -42,8 +42,8 @@ function GameConfiguration() {
                     <>
                         <h1 className={"text-2xl"}>Game configuration</h1>
                         <div className="mb-4">
-                            <label className="block mb-2 text-xl" htmlFor="game_engine">Choose game engine</label>
-                            <select className={"text-xl px-16"} value={gameEngine} onChange={(event) => setGameEngine(event.target.value)}>
+                            <label className="block mb-2 text-xl" htmlFor="game-engine">Choose game engine</label>
+                            <select id="game-engine" className={"text-xl px-16"} value={gameEngine} onChange={(event) => setGameEngine(event.target.value)}>
                                 <option value="RANDOM">Random</option>
                                 <option value="MINMAX">MinMax</option>
                                 <option value="ALPHABETA">AlphaBeta</option>
@@ -52,13 +52,13 @@ function GameConfiguration() {
                         </div>
                         <div className="mb-4">
                             <label className="block mb-2 text-xl" htmlFor="color">Choose color</label>
-                            <select className={"text-xl px-16"} value={color} onChange={(event) => setColor(event.target.value)}>
+                            <select id="color" className={"text-xl px-16"} value={color} onChange={(event) => setColor(event.target.value)}>
                                 <option value="WHITE">White</option>
                                 <option value="BLACK">Black</option>
                             </select>
                         </div>
                         <div className="mb-4">
-                            <button className={"bg-blue-500 text-white px-8 py-4 rounded-full text-xl"} onClick={handleClick}>Start a new a game</button>
+                            <button className={"bg-blue-500 text-white px-8 py-4 rounded-full text-xl"} disabled={gameUIState.loading} onClick={handleClick}>Start a new a game</button>
                         </div>
                     </>
                     :

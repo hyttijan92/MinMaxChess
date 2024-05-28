@@ -21,8 +21,8 @@ function Game() {
 
   useEffect(() => {
     async function gameStart() {
-      if (gameState && gameState.ai_starts) {
-        dispatch(updateGame({ ai_starts: false }))
+      if (gameState && gameState.aiStarts) {
+        dispatch(updateGame({ aiStarts: false }))
         dispatch(makeAIMove(user_uuid,gameState.id, new Chess(gameState.fen).fen()))
       }
     }
@@ -68,9 +68,7 @@ function Game() {
       dispatch(updateGame({ fen: board.fen() }))
       dispatch(makeAIMove(user_uuid,gameState.id,board.fen()))
     }
-    catch (e) {
-      console.log(e);
-    }
+    catch (e) {}
   }
 
   const handleOnMouseOverSquare = (square) => {
