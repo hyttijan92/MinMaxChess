@@ -13,7 +13,7 @@ export const getCurrentGameApi = async(user_uuid) =>{
             throw new Error(response.code)
         }
     } catch(e){
-        return e;
+        throw e;
     }
     
 }
@@ -31,7 +31,7 @@ export const getPreviousGamesApi = async(page) =>{
             throw new Error(response.code)
         }
     } catch(e){
-        return e;
+        throw e;
     }
     
 } 
