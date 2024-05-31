@@ -1,33 +1,9 @@
 from . import AbstractEngine
 import chess
-import datetime
 import copy
 import random
-
-
-class IterativeDeepeningEngine(AbstractEngine):
-
-    def __init__(self, board=..., is_white=True, depth=100):
-        super().__init__(board, is_white)
-        self.depth = 3
-        self.max_depth = depth
-
-    def decide(self):
-        start = datetime.datetime.now()
-        prev_board = None
-        prev_value = 0
-        board = None
-        value = 0
-
-        for i in range(self.depth, self.max_depth):
-            prev_board = board
-            agent = AlphaBetaEngine2(copy.deepcopy(
-                self.board), self.is_white, i, start)
-            board = agent.decide()
-            if agent.timeout:
-                return prev_board
-        return board
-
+import threading
+from functools import partial
 
 CHESS_PIECE_VALUES = {
     chess.PAWN: 100,
@@ -76,71 +52,82 @@ ROOK_PIECE_SQUARE_TABLES_BLACK = [0,  0,  0,  0,  0,  0,  0,  0,
                                   0,  0,  0,  5,  5,  0,  0,  0]
 ROOK_PIECE_SQUARE_TABLES_WHITE = ROOK_PIECE_SQUARE_TABLES_BLACK[::-1]
 
-class AlphaBetaEngine2(AbstractEngine):
-    def __init__(self, board=..., is_white=True, depth=3, start=datetime.datetime.now()):
+class IterativeDeepeningEngine(AbstractEngine):
+
+    def __init__(self, board: chess.Board, is_white=True, depth=100):
         super().__init__(board, is_white)
-        self.depth = depth
-        self.start = start
         self.timeout = False
+        self.depth = 3
+        self.max_depth = depth
+
+    def timeout_occured(self):
+        self.timeout = True
 
     def decide(self):
+        board = None
+        try:
+            timer = threading.Timer(10.0, self.timeout_occured)
+            timer.start()
+            for i in range(self.depth, self.max_depth):
+                board = self.search(copy.deepcopy(self.board), self.is_white, i)
+            timer.cancel()
+            return board
+        except TimeoutError:
+            if board is None:
+                move = list(board.legal_moves)[0]
+                board.push(move)
+                return board
+            else:
+                return board
+    
+    def search(self, board: chess.Board, is_white: bool, depth: int):
         alpha = -99999999
         beta = 99999999
-        legal_moves = list(self.board.legal_moves)
+        legal_moves = list(board.legal_moves)
+        sort_initial_moves_partial = partial(self.sort_initial_moves, board)
         random.shuffle(legal_moves)
-        if self.is_white:
+        if is_white:
             max_value = -99999999
             max_move = None
-            legal_moves.sort(reverse=True, key=self.sort_initial_moves)
+            legal_moves.sort(reverse=True, key=sort_initial_moves_partial)
             for move in legal_moves:
-                if self.timeout:
-                    return
-                self.board.push(move)
-                value = self.alphabeta(
-                    self.board, self.depth-1, alpha, beta, False)
+                board.push(move)
+                value = self.alphabeta(board, depth-1, alpha, beta, False)
                 if value > max_value or max_move == None:
                     max_value = value
                     max_move = move
-                self.board.pop()
+                board.pop()
                 if max_value > beta:
                     break
                 alpha = max(alpha, max_value)
-            self.board.push(max_move)
-            return self.board
+            board.push(max_move)
+            return board
         else:
             min_value = 99999999
             min_move = None
-            legal_moves.sort(reverse=False, key=self.sort_initial_moves)
+            legal_moves.sort(reverse=False, key=sort_initial_moves_partial)
             for move in legal_moves:
-                if self.timeout:
-                    return
-                self.board.push(move)
-                value = self.alphabeta(
-                    self.board, self.depth-1, alpha, beta, True)
+                board.push(move)
+                value = self.alphabeta(board, depth-1, alpha, beta, True)
                 if value < min_value or min_move == None:
                     min_value = value
                     min_move = move
-                self.board.pop()
+                board.pop()
                 if min_value < alpha:
                     break
                 beta = min(beta, min_value)
-            self.board.push(min_move)
-            return self.board
-
-    def sort_initial_moves(self, move):
-        self.board.push(move)
-        result = self.heuristic(self.board)
-        self.board.pop()
+            board.push(min_move)
+            return board
+                   
+    def sort_initial_moves(self, board: chess.Board, move: chess.Move) -> int:
+        board.push(move)
+        result = self.heuristic(board)
+        board.pop()
         return result
-
+    
     def alphabeta(self, board: chess.Board, depth, alpha, beta, is_player_maximizing):
-        end = datetime.datetime.now()
-        if (end-self.start).total_seconds() > 10:
-            self.timeout = True
-            if is_player_maximizing:
-                return -99999999-depth
-            else:
-                return 99999999+depth
+        if self.timeout:
+            raise TimeoutError
         elif depth == 0 or board.is_game_over():
             if is_player_maximizing:
                 return self.heuristic(board) - depth
