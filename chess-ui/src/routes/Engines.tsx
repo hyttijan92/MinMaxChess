@@ -1,7 +1,7 @@
 import Header from "../components/Header";
 import Minmax from "../images/minmax.svg";
 import Alphabeta from "../images/alphabeta.svg";
-import { heuristicMinMax, heuristicAlphaBeta, decisionRandom } from "../codes/codes";
+import { heuristicMinMax, heuristicAlphaBeta, decisionRandom, heuristicIterativeDeepening } from "../codes/codes";
 function Engines() {
     return (
         <>
@@ -15,7 +15,7 @@ function Engines() {
                 <p>Picture illustrates how min max algorithm works in action.</p>
                 <h2 className={"text-xl"}>Heuristic function of the MinMax engine</h2>
                 <p>Following code is the heuristic function of the MinMax engine. Heuristic function is used to evaluate the situation of the board. MinMax engine uses very simple heuristic. If the board represents a checkmate, it assigns a large positive score if white wins and a large negative score if black wins. If the game is a stalemate or there's insufficient material to win, it returns a neutral score. It then iterates through all squares on the board, updating the scores based on the value of each piece. Finally, it returns the difference between white's score and black's score as the overall evaluation of the board.</p>
-                <code className=" rounded-lg block p-4 bg-gray-900 text-gray-100 whitespace-pre overflow-x-scroll">
+                <code className="rounded-lg block p-4 bg-gray-900 text-gray-100 whitespace-pre overflow-x-scroll">
                     {heuristicMinMax}
                 </code>
                 <h2 className={"text-xl"}>Alphabeta engine</h2>
@@ -24,11 +24,14 @@ function Engines() {
                 <p>Picture illustrates how alpha beta pruning differs from min max. As we can see the final node can be pruned, since it does not affect the outcome.</p>
                 <h2 className={"text-xl"}>Heuristic function of the AlphaBeta engine</h2>
                 <p>Following code is the heuristic function of the AlphaBeta engine. Heuristic function is used to evaluate the situation of the board. This heuristic function is similar to MinMax engine's heuristic function, but it extends the heuristic function by incorporating additional evaluation criteria based on piece-square tables. It adjusts the scores of pieces based on their positions on the board. For each piece, it considers its type and adds a bonus or penalty depending on its position, contributing to a more nuanced evaluation. This heuristic function provides a more detailed assessment of the board state by considering both piece values and positional advantages. By doing so, it aims to improve the accuracy of the heuristic evaluation, leading to better decision-making in the game-playing algorithm.</p>
-                <code className=" rounded-lg block p-4 bg-gray-900 text-gray-100 whitespace-pre overflow-x-scroll">
+                <code className="rounded-lg block p-4 bg-gray-900 text-gray-100 whitespace-pre overflow-x-scroll">
                     {heuristicAlphaBeta}
                 </code>
                 <h2 className={"text-xl"}>Iterative deepening engine</h2>
-                <p> Iterative deepening engine uses alpha beta pruning. It performs a series of depth-limited searches, gradually increasing the search depth with each iteration until time constraints are met. This approach ensures the engine can quickly provide a move by using results from shallower searches, while still exploring deeper positions to improve decision quality as time allows.</p>
+                <p> Iterative deepening engine uses alpha beta pruning. It performs a series of depth-limited searches, gradually increasing the search depth with each iteration until time constraints are met. This approach ensures the engine can quickly provide a move by using results from shallower searches, while still exploring deeper positions to improve decision quality as time allows. Iterative deepening engine also uses enhanced heuristic algorithm called PeSTO's evaluation function.</p>
+                <code className=" rounded-lg block p-4 bg-gray-900 text-gray-100 whitespace-pre overflow-x-scroll">
+                    {heuristicIterativeDeepening}
+                </code>
                 <h2 className={"text-xl"}>Random engine</h2>
                 <p>Random chooses random move from all the possible moves. The engine serves mostly for testing purpouses.</p>
                 <h2 className={"text-xl"}>Decision function of the Random engine</h2>
