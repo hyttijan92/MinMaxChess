@@ -9,19 +9,19 @@ import GameConfiguration from "./routes/GameConfiguration"
 import Engines from "./routes/Engines";
 import { useEffect } from "react";
 import { initializeGameState, selectUserUUID } from "./stores/rootStore";
-import { useDispatch, useSelector } from "react-redux";
 import Scores from "./routes/Scores";
+import { useAppDispatch, useAppSelector } from "./stores/hooks";
 function App() {
 
-    const dispatch = useDispatch();
-    const user_uuid = useSelector(selectUserUUID);
+    const dispatch = useAppDispatch();
+    const user_uuid = useAppSelector(selectUserUUID);
     useEffect(()=>{
         dispatch(initializeGameState(user_uuid));
     })
     return (
         <Router>
             <Routes>
-                <Route exact path="/" element={<GameConfiguration />} />
+                <Route path="/" element={<GameConfiguration />} />
                 <Route path="/game" element={<Game />} />
                 <Route path="/engines" element={<Engines />} />
                 <Route path="/scores" element={<Scores />} />

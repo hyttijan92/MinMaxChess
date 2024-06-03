@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { selectGameUIState } from "../stores/rootStore";
+import { useAppSelector } from "../stores/hooks";
 
 function Loading(){
-    const gameUIState = useSelector(selectGameUIState);
+    const gameUIState = useAppSelector(selectGameUIState);
     const [index, setIndex] = useState(0);
     useEffect(() =>{
         const updateDots = setInterval(()=>{

@@ -1,13 +1,14 @@
+import { IError } from "../interfaces/interfaces";
 export const getUserStateFromLocalStorage = () =>{
-    return JSON.parse(localStorage.getItem("user"));
+    return JSON.parse(localStorage.getItem("user") || '{}');
 }
-export const saveUserStateToLocalStorage = (state) =>{
+export const saveUserStateToLocalStorage = (state: string) =>{
     localStorage.setItem("user",state);
 }
 
 export const getUserState = () =>{
     let userState = getUserStateFromLocalStorage();
-    if(userState === null){
+    if(userState === undefined){
         userState = {user_uuid: crypto.randomUUID()}
         saveUserStateToLocalStorage(JSON.stringify(userState));
         return userState;
@@ -16,7 +17,7 @@ export const getUserState = () =>{
         return userState;
     }
 }
-export const errorHandler = (error) =>{
+export const errorHandler = (error: IError) =>{
 
     switch(error.message){
         case "Failed to fetch":

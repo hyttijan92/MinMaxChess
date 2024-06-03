@@ -1,9 +1,9 @@
 import React from "react";
-import { useDispatch } from "react-redux";
 import {useNavigate } from 'react-router-dom'
 import { resetGame } from "../stores/rootStore";
-export default function GameOverDialog({ draw, winner }) {
-  const dispatch = useDispatch();
+import { useAppDispatch } from "../stores/hooks";
+export default function GameOverDialog({ draw, winner }:{draw: boolean, winner: string|undefined}) {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const handleClick = () =>{
     dispatch(resetGame());

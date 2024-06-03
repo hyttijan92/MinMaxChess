@@ -1,13 +1,15 @@
 import { Fragment, useState } from 'react';
-import { useDispatch, useSelector } from "react-redux";
 import Header from "../components/Header";
 import Loading from "../components/Loading";
 import { useEffect } from 'react';
-import { selectScoreState, updateScoreState } from "../stores/rootStore";
+import { selectGameUIState, selectScoreState, updateScoreState } from "../stores/rootStore";
+import { IPreviousGame } from '../interfaces/interfaces';
+import { useAppDispatch, useAppSelector } from '../stores/hooks';
 function Scores() {
     const [page, setPage] = useState(0)
-    const dispatch = useDispatch()
-    const previousGames = useSelector(selectScoreState);
+    const dispatch = useAppDispatch()
+    const previousGames = useAppSelector(selectScoreState);
+    const gameUIState = useAppSelector(selectGameUIState)
     useEffect(() => {
         dispatch(updateScoreState(page));
     }, [dispatch, page])
@@ -25,7 +27,7 @@ function Scores() {
                     <div className="px-4">STATUS</div>
                     <div className="px-4">Winner</div>
                
-                {previousGames.map(previousGame => {
+                {previousGames.map((previousGame: IPreviousGame) => {
                     return (
                         <Fragment key={previousGame.id}>
                             <div className="px-4">{previousGame.id}</div>
@@ -38,10 +40,10 @@ function Scores() {
                 })}
                  </div>
                 {page > 0 &&
-                    <button  className={'bg-gray-300 text-xl  border-gray-350 border-solid border-2 rounded'} onClick={() => setPage(page - 1)}>Previous page</button>
+                    <button  className={'bg-gray-300 text-xl  border-gray-350 border-solid border-2 rounded'} disabled={gameUIState.loading} onClick={() => setPage(page - 1)}>Previous page</button>
                 }
                 {previousGames.length === 10 &&
-                    <button  className={'bg-gray-300 text-xl border-gray-350 border-solid border-2 rounded'} onClick={() => setPage(page + 1)}>Next page</button>
+                    <button  className={'bg-gray-300 text-xl border-gray-350 border-solid border-2 rounded'} disabled={gameUIState.loading} onClick={() => setPage(page + 1)}>Next page</button>
                 }
             </div>
             <Loading/>

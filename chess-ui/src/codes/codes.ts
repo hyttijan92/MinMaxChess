@@ -1,4 +1,4 @@
-export const heuristicMinMax =`    def heuristic(self, board: chess.Board):
+export const heuristicMinMax : string =`    def heuristic(self, board: chess.Board):
         white_score = 0
         black_score = 0
         if board.is_checkmate():
@@ -18,7 +18,7 @@ export const heuristicMinMax =`    def heuristic(self, board: chess.Board):
         return white_score-black_score`
 
 
-export const heuristicAlphaBeta = `
+export const heuristicAlphaBeta : string = `
 def heuristic(self, board: chess.Board):
     white_score = 0
     black_score = 0
@@ -55,7 +55,7 @@ def heuristic(self, board: chess.Board):
 
     return white_score-black_score`
 
-export const decisionRandom = `def decide(self):
+export const decisionRandom : string = `def decide(self):
     moves = []
     for move in self.board.legal_moves:
         moves.append(move)

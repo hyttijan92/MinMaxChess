@@ -1,23 +1,24 @@
 import { Navigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux'
 import Header from '../components/Header';
 import Loading from "../components/Loading";
 import Chessboard from 'chessboardjsx';
-import { Chess } from "chess.js";
+import { Chess, Move, Square } from "chess.js";
 import Modal from '../components/Modal';
 import GameOverDialog from '../components/GameOverDialog';
 import { selectGameState, selectGameUIState, selectUserUUID, togglePromotionDialog, updateGame, storePendingMove,resign, draw, makeAIMove } from "../stores/rootStore";
 import ErrorBar from "../components/ErrorBar";
+import { IGameState, IPendingMove } from "../interfaces/interfaces";
+import { useAppDispatch, useAppSelector } from "../stores/hooks";
 
 
 function Game() {
 
-  const user_uuid = useSelector(selectUserUUID);
-  const gameState = useSelector(selectGameState);
-  const gameUIState = useSelector(selectGameUIState);
+  const user_uuid = useAppSelector(selectUserUUID);
+  const gameState: IGameState = useAppSelector(selectGameState) as IGameState;
+  const gameUIState = useAppSelector(selectGameUIState);
   const [squareStyles, setSquareStyles] = useState({});
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     async function gameStart() {
@@ -29,7 +30,7 @@ function Game() {
     gameStart();
   })
 
-  const checkIfPromoted = (sourceSquare, targetSquare, piece) => {
+  const checkIfPromoted = (sourceSquare: string, targetSquare: string, piece: string) => {
 
     if (piece === 'wP') {
       const whitePromotionSquares = ['a8', 'b8', 'c8', 'd8', 'e8', 'f8', 'g8', 'h8']
@@ -45,23 +46,24 @@ function Game() {
     }
     return false;
   }
-  const handleDrop = ({ sourceSquare, targetSquare, piece }) => {
+  const handleDrop = ({sourceSquare, targetSquare, piece }:{sourceSquare: string, targetSquare: string, piece: string}) => {
     if (checkIfPromoted(sourceSquare, targetSquare, piece)) {
 
       dispatch(storePendingMove({ sourceSquare: sourceSquare, targetSquare: targetSquare }))
-      dispatch(togglePromotionDialog({ showPromotionDialog: true }))
+      dispatch(togglePromotionDialog(true))
     }
     else {
-      movePiece(sourceSquare, targetSquare, null)
+      movePiece(sourceSquare, targetSquare, undefined)
     }
     setSquareStyles({})
   }
-  const choosePromotion = (promotion) => {
-    dispatch(togglePromotionDialog({ showPromotionDialog: false }))
-    movePiece(gameState.pendingMove.sourceSquare, gameState.pendingMove.targetSquare, promotion)
-    dispatch(storePendingMove(null))
+  const choosePromotion = (promotion: string | undefined) => {
+    dispatch(togglePromotionDialog(false))
+    const pendingMove = gameState.pendingMove as IPendingMove
+    movePiece(pendingMove.sourceSquare, pendingMove.targetSquare, promotion)
+    dispatch(storePendingMove(undefined))
   }
-  const movePiece = async (sourceSquare, targetSquare, promotion = null) => {
+  const movePiece = async (sourceSquare: string, targetSquare: string, promotion: string|undefined) => {
     try {
       const board = new Chess(gameState.fen)
       board.move({ from: sourceSquare, to: targetSquare, promotion: promotion })
@@ -71,14 +73,14 @@ function Game() {
     catch (e) {}
   }
 
-  const handleOnMouseOverSquare = (square) => {
+  const handleOnMouseOverSquare = (square: Square) => {
     const board = new Chess(gameState.fen);
     let moves = board.moves({
       square: square,
       verbose: true
     });
     if (moves.length !== 0 && (new Chess(gameState.fen).turn() === 'w') === gameState.is_white) {
-      const stylesForSquares = moves.reduce((acc, curr) => { acc[curr.to] = { backgroundColor: board.squareColor(curr.to) === 'light' ? 'yellow' : 'gold' }; return acc }, {})
+      const stylesForSquares = moves.reduce((acc: {[key :string] : {backgroundColor: string}}, curr: Move) => { acc[curr.to] = { backgroundColor: board.squareColor(curr.to) === 'light' ? 'yellow' : 'gold' }; return acc }, {})
       setSquareStyles(stylesForSquares)
     }
   }
