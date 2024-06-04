@@ -5,5 +5,5 @@ jobs:
   Build-and-Deploy-Docker-images:
     runs-on: ubuntu-latest
     steps:
-      - run: ls ${{ github.workspace }}
+      - run: cd ${{ github.workspace }}
       - run: docker compose build
