@@ -1,4 +1,4 @@
-import { IError, IPendingMove, IState } from "../interfaces/interfaces";
+import { IError, IGameState, IPendingMove, IPreviousGame, IState } from "../interfaces/interfaces";
 import { createSlice, configureStore, PayloadAction } from "@reduxjs/toolkit";
 import { getUserState, errorHandler } from "../utils/utilFunctions";
 import * as api from "../api/api";
@@ -17,16 +17,16 @@ const gameSlice = createSlice({
         scoreState: []
     },
     reducers: {
-        startGame: (state: IState, action) => {
+        startGame: (state: IState, action: PayloadAction<IGameState>) => {
             state.gameState = action.payload
         },
-        resetGame: (state) => {
+        resetGame: (state: IState) => {
             state.gameState = undefined;
         },
-        updateGame: (state: IState, action) => {
+        updateGame: (state: IState, action: PayloadAction<any>) => {
             state.gameState = { ...state.gameState, ...action.payload }
         },
-        updateScores: (state: IState, action) => {
+        updateScores: (state: IState, action: PayloadAction<Array<IPreviousGame>>) => {
             state.scoreState = action.payload
         },
         togglePromotionDialog: (state: IState, action: PayloadAction<boolean>) => {
