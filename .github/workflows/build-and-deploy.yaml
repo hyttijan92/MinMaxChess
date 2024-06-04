@@ -1,8 +1,9 @@
 name: Build and Deploy Docker images
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+run-name: Build and deploy docker images🚀
 on: [push]
 jobs:
   Build-and-Deploy-Docker-images:
     runs-on: ubuntu-latest
     steps:
+      - run: ls
       - run: docker compose build
