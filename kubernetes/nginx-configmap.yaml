@@ -4,33 +4,33 @@ metadata:
   name: nginx-conf
 data:
   nging.conf: |
-  worker_processes 1;
-  events {
-    worker_connections 1024;
-  }
-
-  http {
-    upstream chess-api {
-      server chess-api:8000;
+    worker_processes 1;
+    events {
+      worker_connections 1024;
     }
 
-    upstream chess-ui {
-      server chess-ui:3000;
-    }
-
-    server {
-      listen 7800;
-
-      location /api/ {
-        proxy_pass http://chess-api/;
+    http {
+      upstream chess-api {
+        server chess-api:8000;
       }
 
-      location / {
-        proxy_pass http://chess-ui;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "Upgrade";
-        proxy_set_header Host $host;
+      upstream chess-ui {
+        server chess-ui:3000;
+      }
+
+      server {
+        listen 7800;
+
+        location /api/ {
+          proxy_pass http://chess-api/;
+        }
+
+        location / {
+          proxy_pass http://chess-ui;
+          proxy_http_version 1.1;
+          proxy_set_header Upgrade $http_upgrade;
+          proxy_set_header Connection "Upgrade";
+          proxy_set_header Host $host;
+        }
       }
     }
-  }
