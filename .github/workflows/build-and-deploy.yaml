@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: google-github-actions/auth@v0.4.0
+      - uses: google-github-actions/auth@v2
         with:
           credentials_json: '${{ secrets.SERVICE_ACCOUNT_KEY}}'
       - run: gcloud auth configure-docker ${{ vars.REGION }}-docker.pkg.dev --quiet
@@ -14,11 +14,11 @@ jobs:
         working-directory: chess-ui/
       - run: docker push  ${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/minmax-repo/chess-ui:latest
         working-directory: chess-ui/
-      - uses: google-github-actions/get-gke-credentials@db150f2cc60d1716e61922b832eae71d2a45938f
+      - uses:  google-github-actions/get-gke-credentials@v2
         with:
           cluster_name: ${{ vars.GKE_CLUSTER }}
           location: ${{ vars.REGION }}
-          credentials: ${{ secrets.SERVICE_ACCOUNT_KEY }}
+      - run: kubectl get pods
       - run: curl -sfLo kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
       - run: chmod u+x ./kustomize
       - run: ./kustomize edit set image ${{ vars.REGION }}-docker.pkg.dev/PROJECT_ID/IMAGE:TAG=${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/minmax-repo/chess-ui:latest
