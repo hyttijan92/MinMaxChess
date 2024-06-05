@@ -19,6 +19,5 @@ jobs:
           cluster_name: ${{ vars.GKE_CLUSTER }}
           location: ${{ vars.REGION }}
       - run: kubectl get pods
-      - run: curl -sfLo kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
-      - run: chmod u+x ./kustomize
-      - run: ./kustomize edit set image ${{ vars.REGION }}-docker.pkg.dev/PROJECT_ID/IMAGE:TAG=${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/minmax-repo/chess-ui:latest
+      - run: kubectl apply -f kubernetes/chess-ui-deployment.yaml
+      - run: kubectl get pods

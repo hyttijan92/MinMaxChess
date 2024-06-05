@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chess-ui-deployment
+  labels:
+    app: chess-ui
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: chess-ui
+  template:
+    metadata:
+      labels:
+        app: chess-ui
+    spec:
+      containers:
+      - name: chess-ui
+        image: europe-north1-docker.pkg.dev/minmaxchess-425423/minmax-repo/chess-ui:latest
+        ports:
+        - containerPort: 80
