@@ -11,5 +11,5 @@ jobs:
           credentials_json: '${{ secrets.SERVICE_ACCOUNT_KEY}}'
       - run: cd ${{ github.workspace }}
       - run: cd chess-ui
-      - run: docker build -t  ${REGION}-docker.pkg.dev/${PROJECT_ID}/minmax-repo/chess-ui:v1 .
+      - run: docker build -t  ${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/minmax-repo/chess-ui:v1 .
       - run: docker push ${REGION}-docker.pkg.dev/${PROJECT_ID}/minmax-repo/chess-ui:v1
