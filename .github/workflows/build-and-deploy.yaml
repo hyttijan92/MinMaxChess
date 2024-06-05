@@ -9,7 +9,7 @@ jobs:
       - uses: google-github-actions/auth@v0.4.0
         with:
           credentials_json: '${{ secrets.SERVICE_ACCOUNT_KEY}}'
-      - run: cd chess-ui
-      - run: ls
       - run: docker build -t  ${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/minmax-repo/chess-ui:v1 .
+        working-directory: chess-ui/
       - run: docker push  ${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/minmax-repo/chess-ui:v1
+        working-directory: chess-ui/
