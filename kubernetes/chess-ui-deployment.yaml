@@ -18,4 +18,4 @@ spec:
       - name: chess-ui
         image: europe-north1-docker.pkg.dev/minmaxchess-425423/minmax-repo/chess-ui:latest
         ports:
-        - containerPort: 80
+        - containerPort: 3000
