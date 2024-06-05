@@ -10,14 +10,22 @@ jobs:
         with:
           credentials_json: '${{ secrets.SERVICE_ACCOUNT_KEY}}'
       - run: gcloud auth configure-docker ${{ vars.REGION }}-docker.pkg.dev --quiet
-      - run: docker build -t  ${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/minmax-repo/chess-ui:latest .
+      - name: Build docker image from chess-ui
+        run: docker build -t  ${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/minmax-repo/chess-ui:latest .
         working-directory: chess-ui/
-      - run: docker push  ${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/minmax-repo/chess-ui:latest
+      - name: Build docker image from chess-api
+        run: docker build -t  ${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/minmax-repo/chess-api:latest .
+        working-directory: chess-api/
+      - name: Push docker images to registry
+        run: docker push  ${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/minmax-repo/chess-ui:latest
+        run: docker push  ${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/minmax-repo/chess-api:latest
         working-directory: chess-ui/
       - uses:  google-github-actions/get-gke-credentials@v2
         with:
           cluster_name: ${{ vars.GKE_CLUSTER }}
           location: ${{ vars.REGION }}
-      - run: kubectl get pods
-      - run: kubectl apply -f kubernetes/chess-ui-deployment.yaml
-      - run: kubectl get pods
+      - name: Deploy new images to kubernetes
+        run: kubectl get pods
+        run: kubectl apply -f kubernetes/chess-ui-deployment.yaml
+        run: kubectl apply -f kubernetes/chess-api-deployment.yaml
+        run: kubectl get pods

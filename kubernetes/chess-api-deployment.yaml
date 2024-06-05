@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chess-api-deployment
+  labels:
+    app: chess-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: chess-api
+  template:
+    metadata:
+      labels:
+        app: chess-api
+    spec:
+      containers:
+      - name: chess-api
+        image: europe-north1-docker.pkg.dev/minmaxchess-425423/minmax-repo/chess-api:latest
+        ports:
+        - containerPort: 80
