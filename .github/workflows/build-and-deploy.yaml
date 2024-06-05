@@ -16,8 +16,9 @@ jobs:
       - name: Build docker image from chess-api
         run: docker build -t  ${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/minmax-repo/chess-api:latest .
         working-directory: chess-api/
-      - name: Push docker images to registry
+      - name: Push chess-ui docker image to registry
         run: docker push  ${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/minmax-repo/chess-ui:latest
+      - name: Push chess-api docker image to registry        
         run: docker push  ${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/minmax-repo/chess-api:latest
         working-directory: chess-ui/
       - uses:  google-github-actions/get-gke-credentials@v2
@@ -26,6 +27,6 @@ jobs:
           location: ${{ vars.REGION }}
       - name: Deploy new images to kubernetes
         run: kubectl get pods
-        run: kubectl apply -f kubernetes/chess-ui-deployment.yaml
-        run: kubectl apply -f kubernetes/chess-api-deployment.yaml
-        run: kubectl get pods
+      - run: kubectl apply -f kubernetes/chess-ui-deployment.yaml
+      - run: kubectl apply -f kubernetes/chess-api-deployment.yaml
+      - run: kubectl get pods
