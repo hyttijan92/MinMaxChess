@@ -12,5 +12,6 @@ jobs:
       - run: cd ${{ github.workspace }}
       - run: ls
       - run: cd chess-ui
+      - run: ls
       - run: docker build -t  ${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/minmax-repo/chess-ui:v1 .
       - run: docker push  ${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/minmax-repo/chess-ui:v1
