@@ -6,10 +6,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code and build
-        uses: actions/checkout@v4
-        - run: cd ${{ github.workspace }}
-        uses: google-github-actions/auth@v0.4.0
-        with:
+      - uses: actions/checkout@v4
+      - run: cd ${{ github.workspace }}
+      - uses: google-github-actions/auth@v0.4.0
+      - with:
           credentials_json: '${{ secrets.SERVICE_ACCOUNT_KEY}}'
       - run: cd chess-ui
       - run: docker build -t  ${REGION}-docker.pkg.dev/${PROJECT_ID}/minmax-repo/chess-ui:v1 .
