@@ -19,3 +19,9 @@ spec:
         image: europe-north1-docker.pkg.dev/minmaxchess-425423/minmax-repo/chess-api:latest
         ports:
         - containerPort: 80
+        env:
+        - name: DATABASE_URI
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret-config
+              key: database_uri
